@@ -1,45 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Certificate</title>
+  <meta charset="UTF-8">
+  <title>Certificate Generator</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       text-align: center;
-      background: #f0f0f0;
+      background: #f8f9fa;
     }
 
     #form {
       margin-top: 30px;
     }
 
-    #certificate {
-      display: none;
-      margin: 30px auto;
+    #certificate-container {
       position: relative;
-      width: 800px;
-      height: 600px;
-      background-image: url('certificate-template.jpg');
-      background-size: cover;
+      width: 100%;
+      max-width: 1200px;
+      margin: 40px auto;
+      display: none;
+    }
+
+    #certificate-img {
+      width: 100%;
+      height: auto;
     }
 
     #certName {
       position: absolute;
-      top: 290px;
-      left: 0;
-      right: 0;
-      font-size: 28px;
+      top: 45%;  /* ✅ Vertical position - adjust slightly if needed */
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
       font-weight: bold;
-      color: #2c2c2c;
-    }
-
-    #flag {
-      position: absolute;
-      bottom: 80px;
-      left: 0;
-      right: 0;
-      font-size: 18px;
-      color: #444;
+      color: #000;
+      font-family: 'Georgia', serif;
     }
 
     #downloadBtn {
@@ -49,45 +45,41 @@
   </style>
 </head>
 <body>
+  <h2>🎓 Get Your Certificate</h2>
 
-  <h2>🎓 Claim Your Certificate</h2>
   <form id="form">
-    Enter Your Name: <input id="name" required><br><br>
+    Enter Your Name: <input id="name" required>
     <button type="submit">Generate Certificate</button>
   </form>
 
-  <div id="certificate">
+  <div id="certificate-container">
+    <img id="certificate-img" src="images/White Professional Certificate of Completion.jpg" alt="Certificate">
     <div id="certName"></div>
-    <div id="flag">flag{congrats-certified}</div>
   </div>
 
-  <button id="downloadBtn" onclick="downloadCertificate()">📄 Download Certificate</button>
+  <button id="downloadBtn" onclick="downloadCertificate()">📥 Download Certificate</button>
 
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     document.getElementById("form").onsubmit = function(e) {
       e.preventDefault();
       const name = document.getElementById("name").value.trim();
-
-      if (!name) {
-        alert("❗ Please enter your name.");
-        return;
-      }
 
       if (
         localStorage.getItem("xss-level1") === "complete" &&
         localStorage.getItem("xss-level2") === "complete"
       ) {
         document.getElementById("certName").innerText = name;
-        document.getElementById("certificate").style.display = "block";
-        document.getElementById("form").style.display = "none";
+        document.getElementById("certificate-container").style.display = "block";
         document.getElementById("downloadBtn").style.display = "inline-block";
+        document.getElementById("form").style.display = "none";
       } else {
-        alert("❌ You haven't completed all challenges!");
+        alert("❌ You haven’t completed all challenges!");
       }
     };
 
     function downloadCertificate() {
-      html2canvas(document.getElementById("certificate")).then(canvas => {
+      html2canvas(document.getElementById("certificate-container")).then(canvas => {
         const link = document.createElement("a");
         link.download = "certificate.png";
         link.href = canvas.toDataURL();
@@ -95,9 +87,5 @@
       });
     }
   </script>
-
-  <!-- html2canvas for download -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 </body>
 </html>
