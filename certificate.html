@@ -1,34 +1,103 @@
 <!DOCTYPE html>
 <html>
-<head><title>Certificate</title></head>
+<head>
+  <title>Certificate</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+    }
+
+    #form {
+      margin-top: 30px;
+    }
+
+    #certificate {
+      display: none;
+      margin: 30px auto;
+      position: relative;
+      width: 800px;
+      height: 600px;
+      background-image: url('certificate-template.jpg');
+      background-size: cover;
+    }
+
+    #certName {
+      position: absolute;
+      top: 290px;
+      left: 0;
+      right: 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: #2c2c2c;
+    }
+
+    #flag {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      right: 0;
+      font-size: 18px;
+      color: #444;
+    }
+
+    #downloadBtn {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
 <body>
-  <h2>🎓 Generate Your Certificate</h2>
+
+  <h2>🎓 Claim Your Certificate</h2>
   <form id="form">
     Enter Your Name: <input id="name" required><br><br>
-    <button type="submit">Generate</button>
+    <button type="submit">Generate Certificate</button>
   </form>
 
-  <div id="certificate" style="display:none;">
-    <h3>Certificate of Completion</h3>
-    <p>This is to certify that <b id="certName"></b></p>
-    <p>Has successfully completed Web Security Lab</p>
-    <p><b>Flag:</b> flag{congrats-certified}</p>
+  <div id="certificate">
+    <div id="certName"></div>
+    <div id="flag">flag{congrats-certified}</div>
   </div>
+
+  <button id="downloadBtn" onclick="downloadCertificate()">📄 Download Certificate</button>
 
   <script>
     document.getElementById("form").onsubmit = function(e) {
       e.preventDefault();
-      const name = document.getElementById("name").value;
+      const name = document.getElementById("name").value.trim();
+
+      if (!name) {
+        alert("❗ Please enter your name.");
+        return;
+      }
+
       if (
         localStorage.getItem("xss-level1") === "complete" &&
         localStorage.getItem("xss-level2") === "complete"
       ) {
         document.getElementById("certName").innerText = name;
         document.getElementById("certificate").style.display = "block";
+        document.getElementById("form").style.display = "none";
+        document.getElementById("downloadBtn").style.display = "inline-block";
       } else {
         alert("❌ You haven't completed all challenges!");
       }
     };
+
+    function downloadCertificate() {
+      html2canvas(document.getElementById("certificate")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "certificate.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
   </script>
+
+  <!-- html2canvas for download -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 </body>
 </html>
