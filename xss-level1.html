@@ -1,0 +1,17 @@
+<form method="GET">
+  Enter name: <input name="payload" autocomplete="off">
+  <input type="submit">
+</form>
+
+<p>Output:</p>
+<div id="output"></div>
+
+<script>
+  const input = new URLSearchParams(window.location.search).get("payload");
+  if (input) {
+    document.getElementById("output").innerHTML = input;  // vulnerable
+    if (input.includes("<script>alert('xss')</script>")) {
+      localStorage.setItem("xss-level1", "complete");
+    }
+  }
+</script>
