@@ -1,70 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>XSS Level 1 – Basic Reflected XSS</title>
+  <title>XSS Level 1 – Reflected XSS</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 30px;
-      background-color: #f4f4f4;
-    }
-    h2 {
-      color: #333;
-    }
-    input[type="text"] {
-      padding: 5px;
-      width: 300px;
-    }
-    input[type="submit"] {
-      padding: 5px 10px;
-      background: #333;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #output {
-      background: #fff;
-      padding: 10px;
-      margin-top: 20px;
-      border: 1px solid #ccc;
-      white-space: pre-wrap;
-    }
-    code {
-      background: #eee;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+    input, button { padding: 5px; margin: 5px; }
+    #output { margin-top: 20px; padding: 10px; background: #fff; border: 1px solid #ccc; }
+    code { background: #eee; padding: 2px 6px; border-radius: 4px; }
   </style>
 </head>
 <body>
 
-<h2>XSS Level 1 – Reflected XSS Challenge</h2>
+<h2>Reflected XSS Challenge – Level 1</h2>
 
 <form method="GET">
-  Enter your payload: <input name="payload" autocomplete="off" type="text">
-  <input type="submit" value="Test">
+  Enter XSS Payload: <input type="text" name="payload" autocomplete="off">
+  <button type="submit">Submit</button>
 </form>
 
 <div id="output"></div>
 
 <script>
-// Step 1: Ask for username once
+// Ask for username once
 if (!localStorage.getItem("vulnlab-username")) {
-  const uname = prompt("Enter your name (for flag generation):");
+  const uname = prompt("Enter your name:");
   if (uname) {
     localStorage.setItem("vulnlab-username", uname.trim().toLowerCase());
   } else {
-    alert("Username required!");
+    alert("Name required to continue.");
   }
 }
 
-// Step 2: Generate Unique Flag
+// Function to generate unique flag
 async function generateFlag(levelName) {
   const user = localStorage.getItem("vulnlab-username") || "guest";
   const secret = "xss_secret_salt_level1";
   const str = user + "-" + levelName + "-" + secret;
-
   const encoder = new TextEncoder();
   const data = encoder.encode(str);
   const hash = await crypto.subtle.digest("SHA-256", data);
@@ -73,20 +44,23 @@ async function generateFlag(levelName) {
   return "CTF{" + hex.slice(0, 10) + "}";
 }
 
-// Step 3: Process Payload
-const input = new URLSearchParams(window.location.search).get("payload");
-const outputDiv = document.getElementById("output");
-
+// Get payload and reflect it
+const input = new URLSearchParams(location.search).get("payload");
 if (input) {
-  outputDiv.innerHTML = input;
-
-  if (input === "<script>alert('xss')</script>") {
-    localStorage.setItem("xss-level1", "complete");
-    generateFlag("xss-level1").then(flag => {
-      outputDiv.innerHTML += `<br><br><strong>✅ Challenge Completed!</strong><br>Your Flag: <code>${flag}</code>`;
-    });
-  }
+  document.getElementById("output").innerHTML = input;
 }
+
+// This part will run only when the script is executed (real XSS)
+window.addEventListener("DOMContentLoaded", async () => {
+  if (window.location.search.includes("<script>alert('xss')</script>")) {
+    // Simulate challenge success AFTER code is executed
+    if (!localStorage.getItem("xss-level1")) {
+      localStorage.setItem("xss-level1", "complete");
+      const flag = await generateFlag("xss-level1");
+      alert("✅ XSS Detected! Your Flag: " + flag);
+    }
+  }
+});
 </script>
 
 </body>
