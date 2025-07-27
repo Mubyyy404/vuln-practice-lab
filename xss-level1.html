@@ -1,43 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>XSS Level 1</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body class="container mt-5">
-  <h2>💥 XSS Challenge - Level 1 (Basic Reflected XSS)</h2>
-  <p>Your goal: Trigger an <code>alert()</code> popup using a reflected XSS payload.</p>
-
-  <form method="GET">
-    <label for="payload">Enter name:</label>
-    <input name="payload" id="payload" class="form-control mb-2" autocomplete="off" required>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-
-  <div id="output" class="mt-4"></div>
-
-  <script>
-    const input = new URLSearchParams(window.location.search).get("payload");
-
-    if (input) {
-      const outputDiv = document.getElementById("output");
-
-      // Reflect the input directly (vulnerable to XSS)
-      outputDiv.innerHTML = "Hello, " + input;
-
-      // Hook alert to set challenge complete
-      const originalAlert = window.alert;
-      window.alert = function(msg) {
-        localStorage.setItem("xss-level1", "complete");
-        originalAlert(msg);
-      };
-
-      // If the exact payload matches, trigger alert (in case popup is blocked)
-      if (input === "<script>alert('xss')</script>") {
-        alert("xss");
-      }
+  <title>XSS Level 1 – Basic Reflected XSS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f4f4;
     }
-  </script>
+    h2 {
+      color: #333;
+    }
+    input[type="text"] {
+      padding: 5px;
+      width: 300px;
+    }
+    input[type="submit"] {
+      padding: 5px 10px;
+      background: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #output {
+      background: #fff;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+    code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+<h2>XSS Level 1 – Reflected XSS Challenge</h2>
+
+<form method="GET">
+  Enter your payload: <input name="payload" autocomplete="off" type="text">
+  <input type="submit" value="Test">
+</form>
+
+<div id="output"></div>
+
+<script>
+// Step 1: Ask for username once
+if (!localStorage.getItem("vulnlab-username")) {
+  const uname = prompt("Enter your name (for flag generation):");
+  if (uname) {
+    localStorage.setItem("vulnlab-username", uname.trim().toLowerCase());
+  } else {
+    alert("Username required!");
+  }
+}
+
+// Step 2: Generate Unique Flag
+async function generateFlag(levelName) {
+  const user = localStorage.getItem("vulnlab-username") || "guest";
+  const secret = "xss_secret_salt_level1";
+  const str = user + "-" + levelName + "-" + secret;
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hash));
+  const hex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return "CTF{" + hex.slice(0, 10) + "}";
+}
+
+// Step 3: Process Payload
+const input = new URLSearchParams(window.location.search).get("payload");
+const outputDiv = document.getElementById("output");
+
+if (input) {
+  outputDiv.innerHTML = input;
+
+  if (input === "<script>alert('xss')</script>") {
+    localStorage.setItem("xss-level1", "complete");
+    generateFlag("xss-level1").then(flag => {
+      outputDiv.innerHTML += `<br><br><strong>✅ Challenge Completed!</strong><br>Your Flag: <code>${flag}</code>`;
+    });
+  }
+}
+</script>
+
 </body>
 </html>
