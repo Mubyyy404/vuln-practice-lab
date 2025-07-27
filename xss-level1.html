@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>XSS Level 1</title>
+</head>
+<body>
+
+<h3>XSS Level 1 – Basic Reflected XSS</h3>
+
 <form method="GET">
   Enter name: <input name="payload" autocomplete="off">
   <input type="submit">
@@ -8,10 +17,19 @@
 
 <script>
   const input = new URLSearchParams(window.location.search).get("payload");
+
   if (input) {
-    document.getElementById("output").innerHTML = input;  // vulnerable
-    if (input.includes("<script>alert('xss')</script>")) {
+    // Inject input into page (vulnerable to reflected XSS)
+    const outputDiv = document.getElementById("output");
+    outputDiv.innerHTML = input;
+
+    // Check if payload matches exactly
+    if (input === "<script>alert('xss')</script>") {
+      // Set level complete in localStorage
       localStorage.setItem("xss-level1", "complete");
     }
   }
 </script>
+
+</body>
+</html>
