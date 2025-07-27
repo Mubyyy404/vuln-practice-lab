@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Submit Flags to Get Certificate</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f8f9fa;
+    }
+
+    form {
+      margin-top: 30px;
+    }
+
+    input {
+      margin: 10px;
+      padding: 10px;
+      width: 250px;
+    }
+
+    #certificate-container {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 40px auto;
+      display: none;
+    }
+
+    #certificate-img {
+      width: 100%;
+      height: auto;
+    }
+
+    #certName {
+      position: absolute;
+      top: 49%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px;
+      font-weight: bold;
+      color: #000;
+      font-family: 'Georgia', serif;
+    }
+
+    #downloadBtn {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎓 Submit Flags to Generate Your Certificate</h2>
+
+  <form id="flagForm">
+    <input id="name" placeholder="Enter Your Name" required><br>
+    <input id="flag1" placeholder="Enter XSS Level 1 Flag" required><br>
+    <input id="flag2" placeholder="Enter XSS Level 2 Flag" required><br>
+    <button type="submit">Validate and Generate</button>
+  </form>
+
+  <div id="certificate-container">
+    <img id="certificate-img" src="certificate-template.jpg" alt="Certificate">
+    <div id="certName"></div>
+  </div>
+
+  <button id="downloadBtn" onclick="downloadCertificate()">📥 Download Certificate</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    const correctFlags = {
+      flag1: "flag-xss-level1-1234", // Update to your actual flag
+      flag2: "flag-xss-level2-advanced" // Update to your actual flag
+    };
+
+    document.getElementById("flagForm").onsubmit = function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const userFlag1 = document.getElementById("flag1").value.trim();
+      const userFlag2 = document.getElementById("flag2").value.trim();
+
+      if (
+        userFlag1 === correctFlags.flag1 &&
+        userFlag2 === correctFlags.flag2
+      ) {
+        document.getElementById("certName").innerText = name;
+        document.getElementById("certificate-container").style.display = "block";
+        document.getElementById("downloadBtn").style.display = "inline-block";
+        document.getElementById("flagForm").style.display = "none";
+      } else {
+        alert("❌ One or more flags are incorrect!");
+      }
+    };
+
+    function downloadCertificate() {
+      html2canvas(document.getElementById("certificate-container")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "certificate.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+  </script>
+
+</body>
+</html>
