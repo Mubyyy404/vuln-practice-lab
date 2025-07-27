@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <title>XSS Level 2</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    #flag {
+      display: none;
+    }
+  </style>
 </head>
 <body class="container mt-5">
   <h2>🛡️ XSS Challenge - Level 2</h2>
-  <p>Your goal: Trigger an <code>alert()</code> popup using an XSS payload.</p>
+  <p>Your goal: Trigger an <code>alert()</code> popup using an advanced XSS payload.</p>
 
   <form id="xss-form">
     <label>Enter your name:</label>
@@ -17,26 +22,34 @@
 
   <div id="output" class="mt-4"></div>
 
+  <!-- 🔐 Hidden Flag -->
+  <div id="flag" class="alert alert-success mt-4">
+    🎉 Congrats! Your flag: <strong>flag-xss-level2-advanced</strong>
+  </div>
+
   <script>
+    // ✅ Hook into alert() to track success
+    const originalAlert = window.alert;
+    window.alert = function(msg) {
+      // Only show flag for non-basic alerts
+      const simplePayloads = ["xss", "test", "hello", "1"];
+      const isBasic = simplePayloads.includes((msg || "").toLowerCase());
+
+      if (!isBasic) {
+        localStorage.setItem("xss-level2", "complete");
+        document.getElementById("flag").style.display = "block";
+      }
+
+      originalAlert(msg);
+    };
+
+    // ✅ Handle the form submission
     document.getElementById('xss-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const name = document.getElementById('name').value;
       const outputDiv = document.getElementById('output');
-
-      // Vulnerable reflection (XSS)
       outputDiv.innerHTML = "Hello, " + name;
-
-      // Success condition: check if alert was triggered
-      // Use a hidden message as proof of exploit
     });
-
-    // Hook to detect if alert was called
-    const originalAlert = window.alert;
-    window.alert = function(msg) {
-      // Set XSS level as complete
-      localStorage.setItem("xss-level2", "complete");
-      originalAlert(msg);
-    };
   </script>
 </body>
 </html>
