@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Submit Flags to Get Certificate</title>
+  <title>Submit Flags for Certificate</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -52,15 +52,22 @@
 </head>
 <body>
 
-  <h2>🎓 Submit Flags to Generate Your Certificate</h2>
+  <h2>🎯 Submit Your Challenge Flags</h2>
 
+  <!-- Step 1: Flag submission -->
   <form id="flagForm">
-    <input id="name" placeholder="Enter Your Name" required><br>
     <input id="flag1" placeholder="Enter XSS Level 1 Flag" required><br>
     <input id="flag2" placeholder="Enter XSS Level 2 Flag" required><br>
-    <button type="submit">Validate and Generate</button>
+    <button type="submit">Verify Flags</button>
   </form>
 
+  <!-- Step 2: Name input for certificate -->
+  <form id="nameForm" style="display:none;">
+    <input id="name" placeholder="Enter Your Name for Certificate" required><br>
+    <button type="submit">Generate Certificate</button>
+  </form>
+
+  <!-- Step 3: Certificate Display -->
   <div id="certificate-container">
     <img id="certificate-img" src="certificate-template.jpg" alt="Certificate">
     <div id="certName"></div>
@@ -69,32 +76,39 @@
   <button id="downloadBtn" onclick="downloadCertificate()">📥 Download Certificate</button>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
   <script>
     const correctFlags = {
-      flag1: "flag-xss-level1-1234", // Update to your actual flag
-      flag2: "flag-xss-level2-advanced" // Update to your actual flag
+      flag1: "flag-xss-level1-1234", // Replace with your actual flag
+      flag2: "flag-xss-level2-advanced" // Replace with your actual flag
     };
 
+    // Step 1: Validate flags
     document.getElementById("flagForm").onsubmit = function(e) {
       e.preventDefault();
-
-      const name = document.getElementById("name").value.trim();
       const userFlag1 = document.getElementById("flag1").value.trim();
       const userFlag2 = document.getElementById("flag2").value.trim();
 
-      if (
-        userFlag1 === correctFlags.flag1 &&
-        userFlag2 === correctFlags.flag2
-      ) {
-        document.getElementById("certName").innerText = name;
-        document.getElementById("certificate-container").style.display = "block";
-        document.getElementById("downloadBtn").style.display = "inline-block";
+      if (userFlag1 === correctFlags.flag1 && userFlag2 === correctFlags.flag2) {
+        alert("✅ Flags verified! Enter your name for the certificate.");
         document.getElementById("flagForm").style.display = "none";
+        document.getElementById("nameForm").style.display = "block";
       } else {
-        alert("❌ One or more flags are incorrect!");
+        alert("❌ One or both flags are incorrect.");
       }
     };
 
+    // Step 2: Generate certificate
+    document.getElementById("nameForm").onsubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      document.getElementById("certName").innerText = name;
+      document.getElementById("certificate-container").style.display = "block";
+      document.getElementById("downloadBtn").style.display = "inline-block";
+      document.getElementById("nameForm").style.display = "none";
+    };
+
+    // Step 3: Download certificate
     function downloadCertificate() {
       html2canvas(document.getElementById("certificate-container")).then(canvas => {
         const link = document.createElement("a");
