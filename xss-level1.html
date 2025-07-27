@@ -1,35 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>XSS Level 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-<body>
+<body class="container mt-5">
+  <h2>💥 XSS Challenge - Level 1 (Basic Reflected XSS)</h2>
+  <p>Your goal: Trigger an <code>alert()</code> popup using a reflected XSS payload.</p>
 
-<h3>XSS Level 1 – Basic Reflected XSS</h3>
+  <form method="GET">
+    <label for="payload">Enter name:</label>
+    <input name="payload" id="payload" class="form-control mb-2" autocomplete="off" required>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 
-<form method="GET">
-  Enter name: <input name="payload" autocomplete="off">
-  <input type="submit">
-</form>
+  <div id="output" class="mt-4"></div>
 
-<p>Output:</p>
-<div id="output"></div>
+  <script>
+    const input = new URLSearchParams(window.location.search).get("payload");
 
-<script>
-  const input = new URLSearchParams(window.location.search).get("payload");
+    if (input) {
+      const outputDiv = document.getElementById("output");
 
-  if (input) {
-    // Inject input into page (vulnerable to reflected XSS)
-    const outputDiv = document.getElementById("output");
-    outputDiv.innerHTML = input;
+      // Reflect the input directly (vulnerable to XSS)
+      outputDiv.innerHTML = "Hello, " + input;
 
-    // Check if payload matches exactly
-    if (input === "<script>alert('xss')</script>") {
-      // Set level complete in localStorage
-      localStorage.setItem("xss-level1", "complete");
+      // Hook alert to set challenge complete
+      const originalAlert = window.alert;
+      window.alert = function(msg) {
+        localStorage.setItem("xss-level1", "complete");
+        originalAlert(msg);
+      };
+
+      // If the exact payload matches, trigger alert (in case popup is blocked)
+      if (input === "<script>alert('xss')</script>") {
+        alert("xss");
+      }
     }
-  }
-</script>
-
+  </script>
 </body>
 </html>
