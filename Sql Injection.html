@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🛡️ SQLi Level 1 - Cyber Buddy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Variables for easy theme management */
+    :root {
+      --color-accent-blue: #00ffff; /* Your logo's bright blue */
+      --color-dark-blue: #004e92; /* Your logo's darker blue */
+      --color-deep-bg: #000428; /* Your logo's deepest background */
+      --color-text-light: #e0f7fa; /* Light text for readability */
+      --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
+      --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
+      --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
+      --color-error-red: #ff0000; /* For error messages */
+    }
+
+    body {
+      margin: 0;
+      padding: 80px 20px 80px 20px;
+      background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
+      font-family: 'Fira Code', monospace;
+      color: var(--color-text-light);
+      text-align: center;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Animated background elements (grid/scanline) */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Grid/Matrix Overlay */
+    body::before {
+      background-image:
+        repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
+        repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
+      background-size: 40px 40px;
+      opacity: 0.05;
+      animation: backgroundPulse 15s infinite alternate;
+    }
+
+    @keyframes backgroundPulse {
+      0% { opacity: 0.05; }
+      100% { opacity: 0.08; }
+    }
+
+    /* Glitch/Scanline effect overlay */
+    body::after {
+      background: linear-gradient(
+        transparent 0%,
+        rgba(0, 255, 255, 0.05) 50%,
+        transparent 100%
+      );
+      animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    @keyframes minorGlitch {
+      0%, 100% { clip-path: inset(0 0 0 0); }
+      10% { clip-path: inset(1% 0 99% 0); }
+      30% { clip-path: inset(40% 0 59% 0); }
+      70% { clip-path: inset(80% 0 19% 0); }
+    }
+
+    /* --- BRANDING ELEMENTS --- */
+    .brand-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      z-index: -1;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.25;
+      text-shadow: var(--glow-soft);
+      animation: brandFlicker 2s infinite alternate;
+    }
+
+    @keyframes brandFlicker {
+      0% { opacity: 0.25; transform: translate(-50%, -50%) scale(0.9); }
+      100% { opacity: 0.28; transform: translate(-50%, -50%) scale(0.905); }
+    }
+
+    .brand-logo {
+      width: 30vw;
+      max-width: 350px;
+      filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
+      margin-bottom: 20px;
+    }
+
+    .brand-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8vw;
+      max-font-size: 120px;
+      color: var(--color-accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 7px;
+      text-shadow: var(--glow-strong);
+    }
+    /* --- END BRANDING ELEMENTS --- */
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      color: var(--color-accent-blue);
+      text-shadow: var(--glow-medium);
+      animation: flicker 1.2s infinite alternate;
+      z-index: 1;
+      position: relative;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 1.15rem;
+      color: var(--color-text-light);
+      text-shadow: var(--glow-soft);
+      margin-bottom: 40px;
+      line-height: 1.6;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* SQLi Form Specifics */
+    .login-container {
+        margin-top: 40px;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        background-color: rgba(0, 5, 20, 0.75);
+        border: 1px solid var(--color-accent-blue);
+        border-radius: 10px;
+        box-shadow: var(--glow-medium);
+        animation: pulseBorder 3s infinite alternate;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1rem;
+        color: var(--color-accent-blue);
+        text-shadow: var(--glow-soft);
+    }
+
+    input[type="text"], input[type="password"] {
+      width: calc(100% - 24px);
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid var(--color-accent-blue);
+      background-color: rgba(0, 5, 20, 0.9);
+      color: var(--color-accent-blue);
+      outline: none;
+      box-shadow: var(--glow-soft), inset 0 0 5px rgba(0, 255, 255, 0.2);
+      transition: all 0.3s ease-in-out;
+      font-family: 'Fira Code', monospace;
+    }
+
+    input[type="text"]::placeholder, input[type="password"]::placeholder {
+      color: rgba(0, 255, 255, 0.4);
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus {
+      box-shadow: var(--glow-medium), inset 0 0 8px var(--color-accent-blue);
+      background-color: rgba(0, 8, 30, 1);
+      border-color: var(--color-text-light);
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 15px 35px;
+      font-size: 1.2rem;
+      background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      color: #000;
+      cursor: pointer;
+      box-shadow: var(--glow-medium);
+      transition: all 0.3s ease, transform 0.2s ease-out;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'Orbitron', sans-serif;
+      z-index: 1;
+      position: relative;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
+      box-shadow: var(--glow-strong);
+      transform: translateY(-3px);
+    }
+
+    /* Output box styling (for successful login message - *will be removed after redirect*) */
+    #output {
+      margin-top: 50px;
+      padding: 25px;
+      background-color: rgba(0, 5, 20, 0.7);
+      color: var(--color-text-light);
+      border: 1px solid var(--color-accent-blue);
+      border-radius: 8px;
+      box-shadow: var(--glow-soft);
+      width: calc(100% - 100px);
+      max-width: 800px;
+      min-height: 100px;
+      height: auto;
+      position: relative;
+      z-index: 1;
+      font-size: 1rem;
+      overflow-wrap: break-word;
+      text-align: left;
+      line-height: 1.5;
+      animation: pulseBorder 3s infinite alternate;
+      display: none;
+    }
+
+    @keyframes pulseBorder {
+      0% { border-color: var(--color-accent-blue); box-shadow: var(--glow-soft); }
+      100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: var(--glow-medium); }
+    }
+
+    /* Typing animation styles for output */
+    .typing-effect::after {
+      content: '|';
+      animation: blink-caret 0.75s step-end infinite;
+      display: inline-block;
+    }
+
+    /* Keyframes for the blinking cursor */
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--color-accent-blue); }
+    }
+
+    /* Error Message Styling (outside the main output box) */
+    #errorMessage {
+        color: var(--color-error-red);
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 20px;
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        animation: glitchText 0.5s infinite alternate;
+        display: none;
+        z-index: 2;
+        position: relative;
+    }
+
+    @keyframes glitchText {
+      0% { transform: skewX(0deg); opacity: 1; }
+      25% { transform: skewX(5deg); opacity: 0.9; }
+      50% { transform: skewX(-5deg); opacity: 1; }
+      75% { transform: skewX(3deg); opacity: 0.9; }
+      100% { transform: skewX(0deg); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="brand-container">
+    <img src="buddy-removebg-preview.jpg" alt="Cyber Buddy Logo" class="brand-logo">
+    <div class="brand-text">Cyber Buddy</div>
+  </div>
+
+  <h2>🔑 SQLi LEVEL 1 // BLIND_AUTHENTICATION</h2>
+  <p>🎯 OBJECTIVE: BYPASS LOGIN USING CLASSIC SQL INJECTION (`' OR 1=1-- ` AND SIMILAR)</p>
+
+  <div class="login-container">
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="admin" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="password123" required>
+      </div>
+      <button type="submit">>> LOGIN</button>
+    </form>
+  </div>
+
+  <div id="errorMessage"></div>
+  <div id="output"></div>
+
+  <script>
+    const output = document.getElementById("output");
+    const errorMessage = document.getElementById("errorMessage");
+
+    // Function to simulate typing effect (for success messages)
+    function typeEffect(element, text, delay = 30, callback) { // Added callback
+      errorMessage.style.display = 'none';
+      element.style.display = 'block';
+      element.innerHTML = '';
+      element.classList.add('typing-effect');
+      
+      let i = 0;
+      function typeChar() {
+        if (i < text.length) {
+          if (text.charAt(i) === '<') {
+              let tagEnd = text.indexOf('>', i);
+              if (tagEnd !== -1) {
+                  element.innerHTML += text.substring(i, tagEnd + 1);
+                  i = tagEnd + 1;
+              } else {
+                  element.innerHTML += text.charAt(i);
+                  i++;
+              }
+          } else {
+              element.innerHTML += text.charAt(i);
+              i++;
+          }
+          setTimeout(typeChar, delay);
+        } else {
+          element.classList.remove('typing-effect');
+          if (callback) callback(); // Execute callback after typing is complete
+        }
+      }
+      typeChar();
+    }
+
+    // Function to display an immediate error message
+    function displayError(message) {
+        output.style.display = 'none';
+        output.innerHTML = '';
+        output.classList.remove('typing-effect');
+
+        errorMessage.innerText = message;
+        errorMessage.style.display = 'block';
+    }
+
+
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      let loginSuccess = false;
+      let outputMessage = "";
+
+      const normalizedUsername = username.trim().toLowerCase();
+
+      const acceptedSqlInjectionPayloads = [
+          "' or 1=1--",
+          "' or 1=1 --",
+          "' or '1'='1",
+          "' or 1=1#",
+          "' or 1=1 /*",
+          "' or true--",
+          "admin'--",
+          "admin' or 1=1--",
+          "' or 'a'='a",
+          "\" or 1=1--",
+          "\" or \"1\"=\"1"
+      ];
+
+      const isSqlInjected = acceptedSqlInjectionPayloads.some(payload => normalizedUsername.includes(payload.toLowerCase()));
+
+      if (isSqlInjected) {
+          loginSuccess = true;
+          outputMessage = "LOGIN SUCCESSFUL: Redirecting to Admin Dashboard...";
+      } else if (username === "admin" && password === "password123") {
+          loginSuccess = true;
+          outputMessage = "<span style='color: yellow;'>ACCESS GRANTED: Redirecting to Admin Dashboard...</span>";
+      }
+
+      if (loginSuccess) {
+          typeEffect(output, ">>> AUTHENTICATION_STATUS: " + outputMessage, 20, function() {
+              // Callback function to redirect AFTER typing animation
+              window.location.href = 'admin_dashboard.html';
+          });
+      } else {
+          displayError(">>> AUTHENTICATION_FAILED: Invalid Username or Password. Please try again.");
+      }
+    });
+
+    // Initial state: hide both output and error message.
+    output.style.display = 'none';
+    errorMessage.style.display = 'none';
+  </script>
+</body>
+</html>
