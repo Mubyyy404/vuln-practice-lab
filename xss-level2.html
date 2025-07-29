@@ -321,13 +321,16 @@
      * as that would bypass the challenge.
      */
     function showFlag() {
-      const key = "xss-level2-flag"; // Changed flag key for Level 2
-      let flag = localStorage.getItem(key);
+      const flagKey = "xss-level2-flag"; // Changed flag key for Level 2
+      const completionKey = "xss-level2-completed"; // <-- ADDED: Key to mark completion
+      let flag = localStorage.getItem(flagKey);
       if (!flag) {
         // Generate a new flag only if one doesn't exist for this browser instance
         flag = "flag-xss-level2-" + Math.random().toString(36).substring(2, 10); // Changed flag value
-        localStorage.setItem(key, flag); // Store the newly generated flag
+        localStorage.setItem(flagKey, flag); // Store the newly generated flag
       }
+      // Set completion status for the certificate page
+      localStorage.setItem(completionKey, "true"); // <-- ADDED: Set completion to 'true'
       document.getElementById("flag-value").innerText = flag;
       document.getElementById("flag").style.display = "block";
     }
