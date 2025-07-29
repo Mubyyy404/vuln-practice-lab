@@ -46,14 +46,18 @@
   <div id="certificate-area"></div>
 
   <script>
-    const requiredLevels = ["xss-level1", "xss-level2", "xss-level3"];
-    const allCompleted = requiredLevels.every(level => localStorage.getItem(level) === "completed");
+    // IMPORTANT: These keys must match what you set in your xss-levelX.html files.
+    // Assuming you have xss-level1 and xss-level2. If you add level3, add "xss-level3-completed" here.
+    const requiredLevels = ["xss-level1-completed", "xss-level2-completed"];
+    
+    // Check if ALL required levels are marked as "true" in localStorage
+    const allCompleted = requiredLevels.every(level => localStorage.getItem(level) === "true");
 
     if (!allCompleted) {
       document.getElementById("certificate-area").innerHTML = `
         <div class="text-danger">
           <h3>❌ You have not completed all tasks.</h3>
-          <p>Please finish all the XSS labs to unlock your certificate.</p>
+          <p>Please finish all the XSS labs to unlock your certificate. Required: ${requiredLevels.map(lvl => lvl.replace('-completed', '')).join(', ')}</p>
         </div>`;
     } else {
       document.getElementById("certificate-area").innerHTML = `
@@ -96,7 +100,6 @@
     }
   </script>
 
-  <!-- html2canvas for downloading certificate -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
