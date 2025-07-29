@@ -2,90 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Certificate Generator</title>
+  <title>Cyber Buddy - Certificate of Completion</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
       text-align: center;
-      background: #f8f9fa;
-    }
-
-    #form {
-      margin-top: 30px;
+      padding: 50px;
     }
 
     #certificate-container {
-      position: relative;
-      width: 100%;
-      max-width: 1200px;
-      margin: 40px auto;
-      display: none;
+      border: 3px solid #0f0;
+      padding: 40px;
+      display: inline-block;
+      background: #111;
+      box-shadow: 0 0 20px #0f0;
+      margin-top: 30px;
     }
 
-    #certificate-img {
-      width: 100%;
-      height: auto;
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
     }
 
-    #certName {
-      position: absolute;
-      top: 49%;  /* 👈 Slightly lowered (was 45%) */
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 45px;  /* 👈 Slightly bigger (was 32px) */
-      font-weight: bold;
-      color: #000;
-      font-family: 'Georgia', serif;
+    p {
+      font-size: 20px;
     }
 
     #downloadBtn {
-      display: none;
       margin-top: 20px;
+      padding: 10px 25px;
+      background-color: #0f0;
+      color: black;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #downloadBtn:hover {
+      background-color: #55ff55;
+    }
+
+    #nameInput {
+      padding: 10px;
+      margin-top: 20px;
+      border: 2px solid #0f0;
+      background-color: #111;
+      color: #0f0;
+      font-size: 18px;
+    }
+
+    #inputLabel {
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <h2>🎓 Get Your Certificate</h2>
 
-  <form id="form">
-    Enter Your Name: <input id="name" required>
-    <button type="submit">Generate Certificate</button>
-  </form>
+  <h2>🎓 Cyber Buddy Certificate Generator</h2>
 
-  <div id="certificate-container">
-    <img id="certificate-img" src="certificate-template.jpg.png" alt="Certificate">
-    <div id="certName"></div>
+  <label id="inputLabel" for="nameInput">Enter your name:</label><br>
+  <input type="text" id="nameInput" placeholder="Your full name"><br>
+
+  <button id="downloadBtn" onclick="downloadCertificate()">Download Certificate</button>
+
+  <div id="certificate-container" style="display: none;">
+    <h1>🎉 Certificate of Completion</h1>
+    <p>This is to certify that <strong id="certName"></strong> has successfully completed all Cyber Buddy web challenge levels.</p>
   </div>
 
-  <button id="downloadBtn" onclick="downloadCertificate()">📥 Download Certificate</button>
-
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
-    document.getElementById("form").onsubmit = function(e) {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-
-      if (
-        localStorage.getItem("xss-level1") === "complete" &&
-        localStorage.getItem("xss-level2") === "complete"
-      ) {
-        document.getElementById("certName").innerText = name;
-        document.getElementById("certificate-container").style.display = "block";
-        document.getElementById("downloadBtn").style.display = "inline-block";
-        document.getElementById("form").style.display = "none";
-      } else {
-        alert("❌ You haven’t completed all challenges!");
-      }
-    };
-
     function downloadCertificate() {
-      html2canvas(document.getElementById("certificate-container")).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "certificate.png";
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+      const requiredLevels = ["xss-level1", "xss-level2"]; // Add more as needed
+      let allCompleted = requiredLevels.every(level => localStorage.getItem(level) === "completed");
+
+      const name = document.getElementById("nameInput").value.trim();
+
+      if (!name) {
+        alert("⚠️ Please enter your name to generate the certificate.");
+        return;
+      }
+
+      if (!allCompleted) {
+        alert("❌ You have not completed all tasks. Complete all challenge levels before downloading the certificate.");
+        return;
+      }
+
+      document.getElementById("certName").innerText = name;
+      document.getElementById("certificate-container").style.display = "inline-block";
+
+      setTimeout(() => {
+        html2canvas(document.getElementById("certificate-container")).then(canvas => {
+          const link = document.createElement("a");
+          link.download = `${name.replace(/\s+/g, "_")}_CyberBuddy_Certificate.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+      }, 500);
     }
   </script>
+
 </body>
 </html>
