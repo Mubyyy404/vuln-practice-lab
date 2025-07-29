@@ -301,6 +301,13 @@
   </div>
 
   <script>
+    // Helper function to HTML-encode text for safe display
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    }
+
     /*
      * LOCAL STORAGE BEHAVIOR CLARIFICATION FOR XSS CHALLENGES:
      *
@@ -322,29 +329,35 @@
      */
     function showFlag() {
       const flagKey = "xss-level1-flag";
-      const completionKey = "xss-level1-completed"; // <-- ADDED: Key to mark completion
+      const completionKey = "xss-level1-completed"; 
       let flag = localStorage.getItem(flagKey);
+      
       if (!flag) {
         // Generate a new flag only if one doesn't exist for this browser instance
         flag = "flag-xss-level1-" + Math.random().toString(36).substring(2, 10);
         localStorage.setItem(flagKey, flag);
+        console.log("XSS Level 1 Flag Generated and Stored:", flag);
+      } else {
+        console.log("XSS Level 1 Flag retrieved from localStorage:", flag);
       }
-      // Set completion status for the certificate page
-      localStorage.setItem(completionKey, "true"); // <-- ADDED: Set completion to 'true'
 
+      localStorage.setItem(completionKey, "true"); 
+      console.log(`LocalStorage updated: ${completionKey} = 'true'`); // Confirm update in console
+      
       document.getElementById("flag-value").innerText = flag;
-      // Ensure visibility by directly setting styles, overriding any initial CSS that hides it
       const flagElement = document.getElementById("flag");
       flagElement.style.display = "block";
       flagElement.style.opacity = "1";
       flagElement.style.transform = "scale(1) translateY(0)";
+      console.log("Flag element visibility styles applied.");
     }
 
     // Override the alert function to trigger flag display upon successful XSS
     const originalAlert = window.alert;
     window.alert = function(msg) {
+      console.log("window.alert() intercepted!"); // Log that our override was hit
       showFlag(); // This is called *before* the actual alert popup
-      originalAlert(msg);
+      originalAlert(msg); // Call the original alert to show the popup
     };
 
     const output = document.getElementById("output");
@@ -357,20 +370,9 @@
       
       function typeChar() {
         if (i < text.length) {
-          // If the character is '<', add the whole tag at once for smoother display of HTML
-          if (text.charAt(i) === '<') {
-              let tagEnd = text.indexOf('>', i);
-              if (tagEnd !== -1) {
-                  element.innerHTML += text.substring(i, tagEnd + 1);
-                  i = tagEnd + 1;
-              } else {
-                  element.innerHTML += text.charAt(i); // Fallback for malformed tags
-                  i++;
-              }
-          } else {
-              element.innerHTML += text.charAt(i);
-              i++;
-          }
+          // Append character by character for typing effect
+          element.innerHTML += text.charAt(i);
+          i++;
           setTimeout(typeChar, delay);
         } else {
           element.classList.remove('typing-effect'); // Remove class once typing is done
@@ -383,16 +385,20 @@
 
     if (payload) {
       const prefix = ">>> EXECUTING_PAYLOAD: ";
-      const fullOutput = prefix + payload;
-      typeEffect(output, fullOutput, 20);
+      // For initial typing effect, display the raw payload as it was typed.
+      // Note: This part might still show unexecuted HTML tags if they are part of payload
+      // because typeEffect directly adds to innerHTML.
+      typeEffect(output, prefix + payload, 20); 
       
-      // Directly outputting the payload as HTML (the vulnerability)
-      output.innerHTML += '<br><br><strong>RESULT:</strong><br>' + payload;
+      // For the "RESULT" section, HTML-encode the payload to display it safely as text.
+      // This prevents the browser from trying to re-interpret potentially malicious HTML
+      // and ensures the raw code is *shown* but not *executed* again here.
+      const escapedPayloadForDisplay = escapeHtml(payload);
+      output.innerHTML += '<br><br><strong>RESULT:</strong><br>' + escapedPayloadForDisplay;
 
       // --- START SPECIFIC FIX FOR LEVEL 1 (BYPASS BROWSER XSS AUDITOR FOR LAB) ---
       // This part ensures the alert fires and the flag is given even if the
       // browser's built-in XSS protection tries to block the script injection.
-      // We normalize the payload to handle variations in quotes or whitespace.
       const normalizedPayload = payload.toLowerCase().replace(/\s/g, ''); 
 
       if (
@@ -402,6 +408,7 @@
           normalizedPayload.includes('<script>alert(document.domain)</script>') ||
           normalizedPayload.includes('<script>alert(document.cookie)</script>')
          ) {
+          console.log("Detected a common alert payload. Forcing alert to trigger flag.");
           // If a common alert payload is detected, force the alert to trigger the flag.
           // Using a small timeout to ensure the DOM update finishes before the alert.
           setTimeout(() => { 
