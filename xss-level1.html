@@ -16,9 +16,8 @@
 </head>
 
 <body class="container mt-5">
-
   <h2>🛡️ XSS Challenge - Level 1</h2>
-  <p>Your goal: Find and exploit a basic reflected XSS vulnerability.</p>
+  <p>Objective: Try to inject a script that makes the hidden flag visible.</p>
 
   <form id="xssForm">
     <label for="input">Enter something:</label>
@@ -41,21 +40,18 @@
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       const userInput = document.getElementById("input").value;
-      output.innerHTML = userInput; // vulnerable to reflected XSS
+      output.innerHTML = userInput; // vulnerable to XSS
     });
 
-    // Observer to track when flag becomes visible
-    const observer = new MutationObserver(() => {
-      if (window.getComputedStyle(flag).display !== "none") {
+    // Check every 500ms if the flag is visible
+    setInterval(() => {
+      if (getComputedStyle(flag).display !== "none") {
         if (!localStorage.getItem("xss-level1-completed")) {
           localStorage.setItem("xss-level1-completed", "true");
-          console.log("✅ XSS Level 1 completed and stored in localStorage.");
+          console.log("✅ xss-level1-completed stored in localStorage");
         }
       }
-    });
-
-    observer.observe(flag, { attributes: true, attributeFilter: ['style'] });
+    }, 500);
   </script>
-
 </body>
 </html>
