@@ -32,7 +32,7 @@
       justify-content: center;
     }
 
-    /* Animated background elements */
+    /* Animated background elements (grid/scanline) */
     body::before, body::after {
       content: '';
       position: fixed;
@@ -40,7 +40,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 0;
+      z-index: -2; /* Set to -2 to ensure they are behind the branding */
       pointer-events: none;
     }
 
@@ -87,13 +87,13 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 0; /* Below content */
+      z-index: -1; /* Set to -1 to place it behind the main content but above the deepest background */
       pointer-events: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      opacity: 0.25; /* Increased opacity for better visibility */
+      opacity: 0.25; /* Maintain good visibility */
       text-shadow: var(--glow-soft);
       animation: brandFlicker 2s infinite alternate;
     }
@@ -128,16 +128,10 @@
       color: var(--color-accent-blue);
       text-shadow: var(--glow-medium);
       animation: flicker 1.2s infinite alternate;
-      z-index: 1;
-      position: relative;
+      z-index: 1; /* Ensure this is above branding */
+      position: relative; /* Needed for z-index to work */
       letter-spacing: 2px;
       margin-bottom: 15px;
-    }
-
-    @keyframes flicker {
-      0% { opacity: 1; text-shadow: var(--glow-soft); }
-      50% { opacity: 0.9; text-shadow: var(--glow-medium); }
-      100% { opacity: 1; text-shadow: var(--glow-soft); }
     }
 
     p {
@@ -146,12 +140,14 @@
       text-shadow: var(--glow-soft);
       margin-bottom: 40px;
       line-height: 1.6;
+      z-index: 1; /* Ensure this is above branding */
+      position: relative; /* Needed for z-index to work */
     }
 
     form {
       margin-top: 40px;
       position: relative;
-      z-index: 1;
+      z-index: 1; /* Ensure this is above branding */
       width: 100%;
       max-width: 700px; /* Wider form */
       display: flex;
@@ -171,6 +167,8 @@
       box-shadow: var(--glow-soft), inset 0 0 8px rgba(0, 255, 255, 0.3);
       transition: all 0.3s ease-in-out;
       font-family: 'Fira Code', monospace;
+      z-index: 1; /* Ensure this is above branding */
+      position: relative; /* Needed for z-index to work */
     }
 
     input[type="text"]::placeholder {
@@ -198,6 +196,8 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-family: 'Orbitron', sans-serif;
+      z-index: 1; /* Ensure this is above branding */
+      position: relative; /* Needed for z-index to work */
     }
 
     button:hover {
@@ -220,7 +220,7 @@
       min-height: 100px; /* Standard minimum height */
       height: auto; /* Allow height to adjust based on content */
       position: relative;
-      z-index: 1;
+      z-index: 1; /* Ensure this is above branding */
       font-size: 1rem;
       overflow-wrap: break-word;
       text-align: left;
@@ -256,7 +256,7 @@
       border-radius: 12px; /* Softer rounded corners */
       box-shadow: var(--glow-strong);
       position: relative;
-      z-index: 1;
+      z-index: 1; /* Ensure this is above branding */
       font-size: 1.4rem;
       font-weight: bold;
       animation: flagAcquired 0.8s forwards, neonPulse 1.5s infinite alternate; /* New entry anim + pulse */
@@ -281,12 +281,12 @@
 
 <body>
   <div class="brand-container">
-    <img src="https://raw.githubusercontent.com/Mubyyy404/vuln-practice-lab/refs/heads/main/buddy-removebg-preview.png" alt="Cyber Buddy Logo" class="brand-logo">
+    <img src="buddy-removebg-preview.png" alt="Cyber Buddy Logo" class="brand-logo">
     <div class="brand-text">Cyber Buddy</div>
   </div>
 
   <h2>⚔️ XSS - LEVEL 1</h2>
-  <p>🎯 OBJECTIVE: INJECT MALICIOUS CODE TO INFILTRATE SYSTEM </p>
+  <p>🎯 OBJECTIVE: INJECT A SIMPLE ALERT PAYLOAD (`&lt;script&gt;alert(1)&lt;/script&gt;`)</p>
 
   <form method="GET">
     <input name="payload" type="text" placeholder="ENTER XSS PAYLOAD..." required>
@@ -297,7 +297,7 @@
   <div id="output"></div>
 
   <div id="flag">
-    🎉 <strong>ACCESS GRANTED - FLAG :</strong> <span id="flag-value"></span>
+    🎉 <strong>ACCESS GRANTED // FLAG ACQUIRED:</strong> <span id="flag-value"></span>
   </div>
 
   <script>
@@ -321,13 +321,16 @@
      * as that would bypass the challenge.
      */
     function showFlag() {
-      const key = "xss-level1-flag";
-      let flag = localStorage.getItem(key);
+      const flagKey = "xss-level1-flag";
+      const completionKey = "xss-level1-completed"; // <-- ADDED: Key to mark completion
+      let flag = localStorage.getItem(flagKey);
       if (!flag) {
         // Generate a new flag only if one doesn't exist for this browser instance
         flag = "flag-xss-level1-" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem(key, flag); // Store the newly generated flag
+        localStorage.setItem(flagKey, flag);
       }
+      // Set completion status for the certificate page
+      localStorage.setItem(completionKey, "true"); // <-- ADDED: Set completion to 'true'
       document.getElementById("flag-value").innerText = flag;
       document.getElementById("flag").style.display = "block";
     }
@@ -342,7 +345,7 @@
     const output = document.getElementById("output");
 
     // Function to simulate typing effect
-    function typeEffect(element, text, delay = 30) { // Slightly faster default delay
+    function typeEffect(element, text, delay = 30) {
       let i = 0;
       element.innerHTML = ''; // Clear existing content
       element.classList.add('typing-effect'); // Add typing class for cursor
@@ -374,30 +377,17 @@
     const payload = new URLSearchParams(window.location.search).get("payload");
 
     if (payload) {
-      // Create a temporary container to safely parse the payload's HTML
-      const tempContainer = document.createElement("div");
-      tempContainer.innerHTML = payload;
-
-      // Extract script tags and execute them via eval as before
-      // This is the core of the XSS vulnerability demonstration
-      const scripts = tempContainer.querySelectorAll("script");
-      scripts.forEach(script => {
-        try {
-          eval(script.innerText);
-        } catch (err) {
-          console.error("Script execution error:", err);
-          // Optional: Display error message in output for user feedback
-          tempContainer.innerHTML += `<div style="color: red;">Error: ${err.message}</div>`;
-        }
-      });
-
-      // After extracting and executing scripts, get the remaining HTML for display
-      // Use outerHTML to capture the entire container's content for display
-      const displayContent = tempContainer.innerHTML; // Or tempContainer.outerHTML; depending on desired output
-
-      // Add a simulated terminal prompt prefix before the typed output
-      const prefix = " "; // More engaging prefix
-      typeEffect(output, prefix + displayContent, 20); // Slightly faster typing for better UX
+      // --- START LEVEL 1 VULNERABILITY LOGIC ---
+      // This is the core vulnerability: unsanitized input directly placed into innerHTML.
+      // In a real application, this would be highly dangerous.
+      // For this lab, it's the intended method to demonstrate XSS.
+      const prefix = ">>> EXECUTING_PAYLOAD: "; // Engaging prefix
+      const fullOutput = prefix + payload;
+      typeEffect(output, fullOutput, 20); // Faster typing for better UX
+      
+      // Directly outputting the payload as HTML (the vulnerability)
+      output.innerHTML += '<br><br><strong>RESULT:</strong><br>' + payload;
+      // --- END LEVEL 1 VULNERABILITY LOGIC ---
     } else {
       // If no payload, show an initial prompt in the output box
       typeEffect(output, ">>> SYSTEM_READY\n>_ Awaiting_Payload_Input...", 30);
