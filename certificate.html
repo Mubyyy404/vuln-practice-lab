@@ -34,6 +34,38 @@
     input {
       margin-bottom: 20px;
     }
+    /* New style for the uncompleted message box */
+    .not-completed-message {
+      background-color: #2a0000; /* Darker red background */
+      border: 2px solid #ff0000; /* Red border */
+      border-radius: 10px;
+      padding: 25px;
+      margin: 30px auto;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); /* Red glow */
+    }
+    .not-completed-message h3 {
+      color: #ff3333; /* Brighter red for heading */
+      margin-bottom: 15px;
+    }
+    .not-completed-message p {
+      color: #ffa0a0; /* Lighter red for text */
+      font-size: 1.1em;
+      line-height: 1.5;
+    }
+    .uncompleted-list {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+    .uncompleted-list li {
+      background-color: #4a0000; /* Even darker red for list items */
+      border-left: 3px solid #ff6666;
+      margin-bottom: 8px;
+      padding: 10px;
+      font-weight: bold;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -47,17 +79,38 @@
 
   <script>
     // IMPORTANT: These keys must match what you set in your xss-levelX.html files.
-    // Assuming you have xss-level1 and xss-level2. If you add level3, add "xss-level3-completed" here.
     const requiredLevels = ["xss-level1-completed", "xss-level2-completed"];
-    
-    // Check if ALL required levels are marked as "true" in localStorage
-    const allCompleted = requiredLevels.every(level => localStorage.getItem(level) === "true");
+    // Map internal localStorage keys to user-friendly names
+    const levelDisplayNames = {
+      "xss-level1-completed": "XSS Level 1",
+      "xss-level2-completed": "XSS Level 2",
+      // Add more levels here if you expand:
+      // "xss-level3-completed": "XSS Level 3"
+    };
+
+    let allCompleted = true;
+    const uncompletedLabs = [];
+
+    // Check each required level
+    requiredLevels.forEach(levelKey => {
+      if (localStorage.getItem(levelKey) !== "true") {
+        allCompleted = false;
+        // Add the user-friendly name of the uncompleted lab
+        uncompletedLabs.push(levelDisplayNames[levelKey] || levelKey.replace('-completed', ''));
+      }
+    });
 
     if (!allCompleted) {
+      const uncompletedListHtml = uncompletedLabs.length > 0
+        ? `<p>The following labs are still pending completion:</p><ul class="uncompleted-list">${uncompletedLabs.map(lab => `<li>${lab}</li>`).join('')}</ul>`
+        : ''; // Fallback, though uncompletedLabs should have items if !allCompleted
+
       document.getElementById("certificate-area").innerHTML = `
-        <div class="text-danger">
-          <h3>❌ You have not completed all tasks.</h3>
-          <p>Please finish all the XSS labs to unlock your certificate. Required: ${requiredLevels.map(lvl => lvl.replace('-completed', '')).join(', ')}</p>
+        <div class="not-completed-message">
+          <h3>❌ Access Denied: Labs Incomplete!</h3>
+          <p>You must successfully complete all designated Cyber Buddy Vulnerability Labs to unlock your certificate.</p>
+          ${uncompletedListHtml}
+          <p>Please revisit the challenges and exploit each vulnerability to earn your flags.</p>
         </div>`;
     } else {
       document.getElementById("certificate-area").innerHTML = `
@@ -86,15 +139,18 @@
 
       document.getElementById("certName").innerText = name;
       document.getElementById("certDate").innerText = new Date().toLocaleDateString();
+      
+      // Hide the input/button and show the certificate
+      document.getElementById("certificate-area").querySelector('div:first-child').classList.add('d-none');
       document.getElementById("generatedCertificate").classList.remove("d-none");
     }
 
     function downloadCertificate() {
       const element = document.getElementById("generatedCertificate");
-      html2canvas(element).then(canvas => {
+      html2canvas(element, { scale: 2, backgroundColor: '#111' }).then(canvas => { // Added scale for better resolution
         const link = document.createElement('a');
         link.download = 'CyberBuddy_Certificate.png';
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png', 1.0); // Specify image type and quality
         link.click();
       });
     }
