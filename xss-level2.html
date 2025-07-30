@@ -189,7 +189,7 @@
       border: none;
       border-radius: 50px; /* Pill shape */
       font-weight: bold;
-      color: var(--color-darker-bg); /* Dark text on button */
+      color: var(--color-deep-bg); /* Dark text on button */
       cursor: pointer;
       box-shadow: var(--glow-medium);
       transition: all 0.3s ease, transform 0.2s ease-out;
@@ -301,45 +301,33 @@
   </div>
 
   <script>
-    /*
-     * LOCAL STORAGE BEHAVIOR CLARIFICATION FOR XSS CHALLENGES:
-     *
-     * In this challenge, the flag is generated ONCE per unique browser instance
-     * and stored in localStorage. This means:
-     * - If the user clears browser data (cache, localStorage), the flag is lost.
-     * - If the user uses a different browser on the same device (e.g., Chrome vs. Firefox),
-     * each browser has its own localStorage, so a new flag will be generated for each.
-     * - If the user accesses the challenge from a different device (e.g., phone vs. laptop),
-     * it's a new browser environment, leading to a new flag.
-     *
-     * The flag is designed to persist for a single browser instance to prove completion
-     * without needing to re-exploit.
-     *
-     * IMPORTANT: The flag is only REVEALED upon a successful XSS payload execution
-     * (which triggers the overridden window.alert function).
-     * There is NO code to display the flag automatically on page load if it exists,
-     * as that would bypass the challenge.
-     */
-    function showFlag() {
-      const flagKey = "xss-level2-flag"; // Changed flag key for Level 2
-      const completionKey = "xss-level2-completed"; // <-- ADDED: Key to mark completion
-      let flag = localStorage.getItem(flagKey);
-      if (!flag) {
-        // Generate a new flag only if one doesn't exist for this browser instance
-        flag = "flag-xss-level2-" + Math.random().toString(36).substring(2, 10); // Changed flag value
-        localStorage.setItem(flagKey, flag); // Store the newly generated flag
-      }
-      // Set completion status for the certificate page
-      localStorage.setItem(completionKey, "true"); // <-- ADDED: Set completion to 'true'
-      document.getElementById("flag-value").innerText = flag;
-      document.getElementById("flag").style.display = "block";
+    // Centralized flag generation and storage function
+    function generateAndStoreFlag(level) {
+        const flagKey = `flag-${level}`; // e.g., "flag-xss-level2"
+        const completionKey = `${level}-completed`; // e.g., "xss-level2-completed"
+        let flag = localStorage.getItem(flagKey);
+
+        if (!flag) {
+            flag = `FLAG_${level.toUpperCase()}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
+            localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
+        }
+        localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
+
+        return flag;
+    }
+
+    // Function to display the flag on the page
+    function showFlag(level) {
+        const flagValue = generateAndStoreFlag(level);
+        document.getElementById("flag-value").innerText = flagValue;
+        document.getElementById("flag").style.display = "block";
     }
 
     // Override the alert function to trigger flag display upon successful XSS
     const originalAlert = window.alert;
     window.alert = function(msg) {
-      showFlag(); // This is called *before* the actual alert popup
-      originalAlert(msg);
+        showFlag('xss-level2'); // Call showFlag for XSS Level 2
+        originalAlert(msg);
     };
 
     const output = document.getElementById("output");
@@ -356,11 +344,11 @@
           if (text.charAt(i) === '<') {
               let tagEnd = text.indexOf('>', i);
               if (tagEnd !== -1) {
-                  element.innerHTML += text.substring(i, tagEnd + 1);
-                  i = tagEnd + 1;
+                element.innerHTML += text.substring(i, tagEnd + 1);
+                i = tagEnd + 1;
               } else {
-                  element.innerHTML += text.charAt(i); // Fallback for malformed tags
-                  i++;
+                element.innerHTML += text.charAt(i); // Fallback for malformed tags
+                i++;
               }
           } else {
               element.innerHTML += text.charAt(i);
@@ -439,31 +427,31 @@
           }
 
           // Append the original image tag (even if it didn't trigger JS, for display)
-          processedOutputHTML += originalImgHTML;
+          // Ensure we display something from the payload even if it's not executing JS directly.
+          if (!src || !onerror || !processedOutputHTML.includes(originalImgHTML)) { // Only append if it wasn't already noted as executing JS
+               processedOutputHTML += originalImgHTML;
+          }
       });
 
       // Append any other safe HTML (non-script, non-img elements) or remaining text
-      // We are *not* re-injecting the raw payload's innerHTML directly here,
-      // but rather building up the output based on what we processed.
-      // For simplicity, we'll just show the original payload for non-img/script parts
-      // after attempting to remove scripts.
       let finalDisplayContent = sanitizedPayload; // Start with payload after script removal
 
       // If any img tags were processed, we might want to override/append
       // or show the 'processedOutputHTML' instead. For this level,
       // let's show what was successfully processed, or a message if nothing happened.
-      if (processedOutputHTML) {
-          finalDisplayContent = processedOutputHTML;
+      if (processedOutputHTML && processedOutputHTML.trim() !== originalImgHTML.trim()) { // Check if something was *actually* processed from img tags
+          // If we had specific img tag processing, prepend it.
+          finalDisplayContent = processedOutputHTML + "<br>Remaining Payload (if any, script-free): <br>" + sanitizedPayload;
       } else if (payload.includes('<script')) {
           finalDisplayContent = `<span style="color: yellow;">Filter engaged: &lt;script&gt; tags are not allowed!</span><br>` + sanitizedPayload;
       } else {
-         finalDisplayContent = " " + sanitizedPayload;
+           finalDisplayContent = " " + sanitizedPayload;
       }
 
       // --- END LEVEL 2 SANITIZATION / VULNERABILITY LOGIC ---
 
       // Add a simulated terminal prompt prefix before the typed output
-      const prefix = " "; // More engaging prefix
+      const prefix = ">>> EXECUTION_LOG:\n>_ "; // More engaging prefix
       typeEffect(output, prefix + finalDisplayContent, 20); // Slightly faster typing for better UX
     } else {
       // If no payload, show an initial prompt in the output box
