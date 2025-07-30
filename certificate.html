@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -76,7 +76,6 @@
   </div>
 
   <script>
-    // Check if XSS Level 1 is completed
     const completed = localStorage.getItem("xss-level1-completed") === "true";
 
     if (completed) {
@@ -92,7 +91,6 @@
         return;
       }
 
-      // Redirect with name to certificate page (replace with your Canva template logic)
       const certificateURL = `https://your-certificate-page.com/?name=${encodeURIComponent(name)}`;
       window.open(certificateURL, "_blank");
     }
