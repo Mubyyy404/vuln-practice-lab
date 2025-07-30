@@ -173,12 +173,18 @@
       padding: 10px 0;
       border-bottom: 1px dashed rgba(0, 255, 255, 0.2);
       display: flex;
+      flex-wrap: wrap; /* Allow wrapping for smaller screens */
       justify-content: space-between;
       align-items: center;
+      gap: 10px; /* Space between elements in the list item */
     }
 
     li:last-child {
       border-bottom: none;
+    }
+
+    .challenge-info {
+        flex-grow: 1; /* Allows challenge name and status to take available space */
     }
 
     .status-completed {
@@ -192,6 +198,85 @@
       font-weight: bold;
       text-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
     }
+
+    /* Animated Input Field Styles */
+    .input-group {
+      position: relative;
+      width: 250px; /* Adjust as needed */
+      margin-left: auto; /* Push to the right */
+    }
+
+    .flag-input {
+      width: 100%;
+      padding: 10px 10px 10px 5px;
+      font-size: 1rem;
+      color: var(--color-text-light);
+      border: none;
+      border-bottom: 2px solid var(--color-accent-blue);
+      outline: none;
+      background: transparent;
+      transition: all 0.3s ease;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .flag-input:focus {
+      border-bottom: 2px solid var(--color-green);
+      box-shadow: 0 2px 10px rgba(0, 255, 128, 0.3);
+    }
+
+    .flag-input::placeholder {
+      color: rgba(224, 247, 250, 0.5);
+    }
+
+    .flag-input:focus::placeholder {
+        color: transparent; /* Hide placeholder on focus */
+    }
+
+    .flag-input-label {
+      position: absolute;
+      top: 10px;
+      left: 5px;
+      color: rgba(0, 255, 255, 0.7);
+      font-size: 1rem;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .flag-input:focus ~ .flag-input-label,
+    .flag-input:not(:placeholder-shown) ~ .flag-input-label {
+      top: -15px;
+      font-size: 0.8rem;
+      color: var(--color-accent-blue);
+      text-shadow: var(--glow-soft);
+    }
+
+    .submit-flag-btn {
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        margin-left: 10px; /* Space between input and button */
+        font-family: 'Fira Code', monospace;
+    }
+
+    .submit-flag-btn:hover {
+        background: linear-gradient(90deg, #0056b3, #007bff);
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
+        transform: translateY(-1px);
+    }
+
+    .submit-flag-btn:disabled {
+        background: #333;
+        cursor: not-allowed;
+        opacity: 0.6;
+        box-shadow: none;
+    }
+
 
     button {
       margin-top: 25px;
@@ -324,10 +409,8 @@
         display: none; /* Hide print button on printout */
       }
     }
-
   </style>
 </head>
-
 <body>
   <div class="brand-container">
     <img src="buddy-removebg-preview.png" alt="Cyber Buddy Logo" class="brand-logo">
@@ -335,7 +418,6 @@
   </div>
 
   <h2>🏆 Your Certification Progress</h2>
-
   <div class="container">
     <h3>Challenge Completion Status:</h3>
     <ul id="challenge-list">
@@ -364,14 +446,16 @@
       const certDateElement = document.getElementById("cert-date");
       const certRecipientNameElement = document.getElementById("cert-recipient-name");
 
-      // Define your challenges here.
-      // The `key` must match the localStorage key used to store completion status.
+      // Define your challenges here with a correctFlag property.
+      // IMPORTANT: For a real application, NEVER store actual flags client-side for security.
+      // Flags should be validated on a secure backend server. This is for demonstration only.
       const challengeList = [
-        { name: "XSS Fundamentals - Level 1", key: "xss-level1-completed" },
-        { name: "SQL Injection - Level 1", key: "sql-level1-completed" },
-        { name: "Command Injection - Level 1", key: "injection-level1-completed" },
+        { name: "XSS Fundamentals - Level 1", key: "xss-level1-completed", correctFlag: "FLAG_XSS_COMPLETED_1" },
+        { name: "SQL Injection - Level 1", key: "sql-level1-completed", correctFlag: "FLAG_SQL_COMPLETED_1" },
+        { name: "Command Injection - Level 1", key: "injection-level1-completed", correctFlag: "FLAG_CMD_COMPLETED_1" },
+        { name: "Broken Authentication - Level 1", key: "auth-level1-completed", correctFlag: "FLAG_AUTH_COMPLETED_1" },
         // Add more challenges here:
-        // { name: "New Challenge Name", key: "new-challenge-key-completed" },
+        // { name: "New Challenge Name", key: "new-challenge-key-completed", correctFlag: "YOUR_NEW_FLAG_HERE" },
       ];
 
       let allChallengesCompleted = true;
@@ -387,14 +471,43 @@
 
           const listItem = document.createElement("li");
           listItem.innerHTML = `
-            <span>${challenge.name}:</span>
-            <span class="${statusClass}">${statusText}</span>
+            <div class="challenge-info">
+                <span>${challenge.name}:</span>
+                <span id="${challenge.key}-status" class="${statusClass}">${statusText}</span>
+            </div>
+            ${!isCompleted ? `
+            <div class="input-group">
+                <input type="text" id="${challenge.key}-flag-input" class="flag-input" placeholder=" " autocomplete="off">
+                <label for="${challenge.key}-flag-input" class="flag-input-label">Enter Flag</label>
+                <button class="submit-flag-btn" data-challenge-key="${challenge.key}">Submit</button>
+            </div>
+            ` : ''}
           `;
           challengeListElement.appendChild(listItem);
 
           if (!isCompleted) {
             allChallengesCompleted = false;
           }
+        });
+
+        // Add event listeners to the new submit buttons
+        document.querySelectorAll('.submit-flag-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const challengeKey = event.target.dataset.challengeKey;
+                const inputElement = document.getElementById(`${challengeKey}-flag-input`);
+                const enteredFlag = inputElement.value.trim();
+
+                const challenge = challengeList.find(c => c.key === challengeKey);
+
+                if (challenge && enteredFlag === challenge.correctFlag) {
+                    localStorage.setItem(challengeKey, "true");
+                    alert(`Flag for "${challenge.name}" is correct! Challenge completed.`);
+                    updateChallengeStatus(); // Re-render the list to update status
+                } else {
+                    alert(`Incorrect flag for "${challenge.name}". Please try again.`);
+                    inputElement.value = ''; // Clear input on incorrect flag
+                }
+            });
         });
 
         if (allChallengesCompleted) {
@@ -411,7 +524,8 @@
         } else {
           generateCertBtn.disabled = true;
           generateCertBtn.textContent = "MORE CHALLENGES TO GO!";
-          generateCertBtn.style.background = ''; // Reset to default disabled style
+          // Reset to default disabled style
+          generateCertBtn.style.background = '';
           generateCertBtn.style.boxShadow = '';
           generateCertBtn.onmouseover = null;
           generateCertBtn.onmouseout = null;
