@@ -121,7 +121,6 @@
     }
     /* --- END BRANDING ELEMENTS --- */
 
-
     h2 {
       font-family: 'Orbitron', sans-serif;
       font-size: 2.8rem;
@@ -132,6 +131,15 @@
       position: relative;
       letter-spacing: 2px;
       margin-bottom: 15px;
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow: var(--glow-medium);
+      }
+      20%, 24%, 55% {
+        text-shadow: none;
+      }
     }
 
     p {
@@ -246,7 +254,7 @@
     }
 
     #flag {
-      display: none; /* Hidden by default */
+      display: none;
       margin-top: 40px;
       padding: 25px;
       background: rgba(0, 15, 30, 0.9);
@@ -262,8 +270,8 @@
       font-family: 'Orbitron', sans-serif;
       text-shadow: var(--glow-soft);
       letter-spacing: 1px;
-      opacity: 0; /* Start hidden for animation */
-      transform: scale(0.9); /* Start slightly smaller for animation */
+      opacity: 0;
+      transform: scale(0.9);
     }
 
     @keyframes flagAcquired {
@@ -275,28 +283,6 @@
       0% { box-shadow: var(--glow-medium); }
       100% { box-shadow: var(--glow-strong); }
     }
-
-    .back-button {
-        display: inline-block;
-        margin-top: 50px;
-        padding: 10px 25px;
-        background: var(--color-dark-blue);
-        color: var(--color-text-light);
-        border: 1px solid var(--color-accent-blue);
-        border-radius: 5px;
-        text-decoration: none;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: var(--glow-soft);
-    }
-
-    .back-button:hover {
-        background: var(--color-accent-blue);
-        color: var(--color-deep-bg);
-        box-shadow: var(--glow-medium);
-        transform: translateY(-2px);
-    }
   </style>
 </head>
 
@@ -307,7 +293,7 @@
   </div>
 
   <h2>⚔️ XSS - LEVEL 1</h2>
-  <p>🎯 OBJECTIVE: INJECT A SIMPLE SCRIPT (E.G., `&lt;script&gt;alert('XSS');&lt;/script&gt;`) INTO THE INPUT FIELD.</p>
+  <p>🎯 OBJECTIVE: INJECT A SIMPLE SCRIPT TO TRIGGER AN ALERT</p>
 
   <form method="GET">
     <input name="payload" type="text" placeholder="ENTER XSS PAYLOAD..." required>
@@ -321,8 +307,6 @@
     🎉 <strong>ACCESS GRANTED // FLAG ACQUIRED:</strong> <span id="flag-value"></span>
   </div>
 
-  <a href="index.html" class="back-button">Back to Challenges</a>
-
   <script>
     // Centralized flag generation and storage function
     function generateAndStoreFlag(level) {
@@ -331,7 +315,7 @@
         let flag = localStorage.getItem(flagKey);
 
         if (!flag) {
-            flag = `FLAG_${level.toUpperCase().replace(/-/g, '_')}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
+            flag = `FLAG_${level.toUpperCase()}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
             localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
         }
         localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
@@ -343,14 +327,17 @@
     function showFlag(level) {
         const flagValue = generateAndStoreFlag(level);
         document.getElementById("flag-value").innerText = flagValue;
-        document.getElementById("flag").style.opacity = 1; // Make flag visible
-        document.getElementById("flag").style.transform = "scale(1) translateY(0)"; // Reset transform
-        document.getElementById("flag").style.display = "block"; // Ensure it's displayed
+        document.getElementById("flag").style.display = "block";
     }
 
+    // Override the alert function to trigger flag display upon successful XSS
+    const originalAlert = window.alert;
+    window.alert = function(msg) {
+        showFlag('xss-level1'); // Call showFlag for XSS Level 1
+        originalAlert(msg);
+    };
+
     const output = document.getElementById("output");
-    const urlParams = new URLSearchParams(window.location.search);
-    const payload = urlParams.get("payload"); // Get the payload from the URL query parameter
 
     // Function to simulate typing effect
     function typeEffect(element, text, delay = 30) {
@@ -382,20 +369,32 @@
       typeChar();
     }
 
-    if (payload) {
-      // --- VULNERABILITY: DIRECT REFLECTION OF USER INPUT ---
-      // For Level 1, we intentionally reflect the payload directly into the DOM
-      // without any sanitization or encoding.
-      // The browser will then parse and execute any valid HTML/JavaScript.
-      
-      // We still use typeEffect for the initial display to keep consistency.
-      // The crucial part is setting innerHTML with the raw payload.
-      typeEffect(output, ">>> REFLECTED_OUTPUT:\n>_ " + payload, 20);
+    const urlParams = new URLSearchParams(window.location.search);
+    const payload = urlParams.get('payload');
 
-      // Trigger the flag display directly when a payload is present.
-      // This is because the core vulnerability is the reflection itself,
-      // and any script (even one not calling alert) would signify success.
-      showFlag('xss-level1');
+    if (payload) {
+      // Direct reflection of payload into innerHTML - vulnerable to XSS
+      // This is the vulnerability for Level 1
+      const decodedPayload = decodeURIComponent(payload); // Decode URL-encoded payload
+
+      // Add a simulated terminal prompt prefix before the typed output
+      const prefix = ">>> USER_INPUT_REFLECTION:\n>_ "; // More engaging prefix
+      
+      // Introduce the vulnerability by setting innerHTML directly
+      // In a real application, this would be an unsafe operation for user-supplied input.
+      output.innerHTML = prefix + decodedPayload;
+
+      // Simulate a direct script execution if the payload contains script tags
+      // This part is what makes it vulnerable to a simple <script>alert(1)</script>
+      const scriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+      let match;
+      while ((match = scriptRegex.exec(decodedPayload)) !== null) {
+          try {
+              eval(match[0].replace(/<\/?script[^>]*>/g, '')); // Execute the script content
+          } catch (e) {
+              console.error("Error executing payload script:", e);
+          }
+      }
 
     } else {
       // If no payload, show an initial prompt in the output box
