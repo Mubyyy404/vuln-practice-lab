@@ -14,24 +14,26 @@
             --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
             --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
             --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
+            --color-certificate-bg: rgba(0, 10, 30, 0.9);
+            --color-certificate-border: var(--color-accent-blue);
         }
 
         body {
             margin: 0;
-            padding: 50px 20px;
+            padding: 40px 20px;
             background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
             font-family: 'Fira Code', monospace;
             color: var(--color-text-light);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
         }
 
+        /* Animated background elements (grid/scanline) */
         body::before, body::after {
             content: '';
             position: fixed;
@@ -43,6 +45,7 @@
             pointer-events: none;
         }
 
+        /* Grid/Matrix Overlay */
         body::before {
             background-image:
                 repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
@@ -78,254 +81,229 @@
             70% { clip-path: inset(80% 0 19% 0); }
         }
 
-        .brand-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.25;
-            text-shadow: var(--glow-soft);
-            animation: brandFlicker 2s infinite alternate;
-        }
-
-        @keyframes brandFlicker {
-            0% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0.28; transform: translate(-50%, -50%) scale(1.005); }
-        }
-
-        .brand-logo {
-            width: 35vw;
-            max-width: 400px;
-            filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
-            margin-bottom: 25px;
-        }
-
-        .brand-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 9vw;
-            max-font-size: 130px;
-            color: var(--color-accent-blue);
-            text-transform: uppercase;
-            letter-spacing: 7px;
-            text-shadow: var(--glow-strong);
-        }
-
-        .certificate-container {
-            background-color: rgba(0, 5, 20, 0.85);
-            border: 2px solid var(--color-accent-blue);
-            border-radius: 15px;
-            box-shadow: var(--glow-strong);
-            padding: 40px;
-            max-width: 900px;
-            width: 90%;
-            margin-top: 30px;
-            position: relative;
-            z-index: 1;
-            animation: fadeIn 1s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         h1 {
             font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
             color: var(--color-accent-blue);
-            font-size: 3rem;
             text-shadow: var(--glow-strong);
-            margin-bottom: 20px;
-            animation: flicker 1.2s infinite alternate;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            animation: flicker 1.5s infinite alternate;
+            text-align: center;
         }
 
         @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: var(--glow-medium);
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-            }
+          0%, 100% { text-shadow: var(--glow-medium); }
+          50% { text-shadow: var(--glow-strong); }
         }
 
-        .certificate-text {
+        .certificate-container {
+            background-color: var(--color-certificate-bg);
+            border: 3px solid var(--color-certificate-border);
+            border-radius: 15px;
+            box-shadow: var(--glow-strong);
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 40px;
+            animation: pulseBorder 3s infinite alternate;
+        }
+
+        @keyframes pulseBorder {
+          0% { border-color: var(--color-accent-blue); box-shadow: var(--glow-strong); }
+          100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 25px var(--color-accent-blue), 0 0 50px rgba(0, 255, 255, 0.7); }
+        }
+
+        .certificate-container h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: var(--glow-medium);
+        }
+
+        .certificate-container p {
             font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 30px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: var(--color-text-light);
         }
 
-        .completion-list {
+        .certificate-signature {
+            margin-top: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.3rem;
+            color: var(--color-accent-blue);
+            text-shadow: var(--glow-soft);
+        }
+
+        .flag-section {
+            margin-top: 40px;
+            border-top: 1px dashed rgba(0, 255, 255, 0.3);
+            padding-top: 30px;
+            text-align: left;
+        }
+
+        .flag-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--color-accent-blue);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: var(--glow-soft);
+        }
+
+        .flag-list {
             list-style: none;
             padding: 0;
-            text-align: left;
-            margin: 0 auto 30px auto;
-            max-width: 500px;
+            margin: 0;
         }
 
-        .completion-list li {
-            background-color: rgba(0, 10, 40, 0.6);
+        .flag-item {
+            background-color: rgba(0, 5, 20, 0.6);
             border: 1px solid rgba(0, 255, 255, 0.3);
             border-left: 5px solid var(--color-accent-blue);
-            padding: 12px 20px;
+            padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
-        .completion-list li.completed {
-            border-left-color: #32CD32; /* Lime green for completed */
-            box-shadow: 0 0 8px rgba(50, 205, 50, 0.4);
+        .flag-item strong {
+            color: var(--color-text-light);
+            flex-grow: 1;
         }
 
-        .completion-list li.completed span.status {
-            color: #32CD32; /* Lime green text for status */
+        .flag-value {
+            color: #00ff00; /* Green for flags */
             font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+            font-size: 0.9rem; /* Smaller for long flags */
+            word-break: break-all; /* Break long flags */
+            margin-left: 15px;
         }
 
-        .completion-list li.pending {
-            border-left-color: #FFA500; /* Orange for pending */
-            box-shadow: 0 0 8px rgba(255, 165, 0, 0.3);
+        .flag-value.not-completed {
+            color: #ffcc00; /* Yellow for not completed */
+            font-style: italic;
         }
 
-        .completion-list li.pending span.status {
-            color: #FFA500; /* Orange text for status */
-            font-weight: bold;
-        }
-
-        .completion-list li span.flag-value {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.95em;
-            color: rgba(0, 255, 255, 0.7);
-        }
-
-        .completion-list li:hover {
-            transform: translateX(5px);
-            background-color: rgba(0, 15, 50, 0.8);
-        }
-
-        .signature {
-            margin-top: 40px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            color: rgba(0, 255, 255, 0.8);
-            text-shadow: var(--glow-soft);
-        }
-
-        .signature hr {
-            border: none;
-            border-top: 1px dashed rgba(0, 255, 255, 0.3);
-            width: 60%;
-            margin: 15px auto;
-        }
-
-        .home-button {
-            margin-top: 40px;
-            padding: 15px 35px;
-            font-size: 1.2rem;
-            background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            color: var(--color-deep-bg);
-            cursor: pointer;
-            box-shadow: var(--glow-medium);
-            transition: all 0.3s ease, transform 0.2s ease-out;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .back-button {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 10px 25px;
+            background: var(--color-dark-blue);
+            color: var(--color-text-light);
+            border: 1px solid var(--color-accent-blue);
+            border-radius: 5px;
+            text-decoration: none;
             font-family: 'Orbitron', sans-serif;
-            text-decoration: none; /* For the anchor tag */
-            display: inline-block; /* For the anchor tag */
-            z-index: 1;
-            position: relative;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-soft);
         }
 
-        .home-button:hover {
-            background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
-            box-shadow: var(--glow-strong);
-            transform: translateY(-3px);
+        .back-button:hover {
+            background: var(--color-accent-blue);
+            color: var(--color-deep-bg);
+            box-shadow: var(--glow-medium);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .certificate-container {
+                padding: 30px;
+            }
+            .certificate-container h2 {
+                font-size: 2rem;
+            }
+            .certificate-container p, .flag-item {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="brand-container">
-        <img src="buddy-removebg-preview.jpg" alt="Cyber Buddy Logo" class="brand-logo">
-        <div class="brand-text">Cyber Buddy</div>
-    </div>
+    <h1>Certificate of Completion</h1>
 
     <div class="certificate-container">
-        <h1>Completion Certificate</h1>
-        <p class="certificate-text">
-            This certifies that you have successfully completed the following cybersecurity challenges
-            and demonstrated your proficiency in identifying and mitigating vulnerabilities.
-            Keep honing your skills, future Cyber Guardian!
+        <h2>Cyber Security Challenge Series</h2>
+        <p>This certifies that</p>
+        <p style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: #fff; text-shadow: var(--glow-medium);">A DEDICATED LEARNER</p>
+        <p>has successfully completed the foundational challenges in the Cyber Buddy series, demonstrating proficiency in identifying and exploiting common web vulnerabilities.</p>
+        <p class="certificate-signature">
+            Cyber Buddy Security Team <br>
+            Date: <span id="completion-date"></span>
         </p>
 
-        <ul id="completion-status" class="completion-list">
+        <div class="flag-section">
+            <h3>Acquired Flags:</h3>
+            <ul id="flag-list" class="flag-list">
+                <!-- Flags will be populated here by JavaScript -->
             </ul>
-
-        <div class="signature">
-            <hr>
-            Cyber Buddy Core Team
-            <br>
-            <small>Issued: <span id="issue-date"></span></small>
         </div>
-
-        <a href="index.html" class="home-button">Back to Challenges</a>
     </div>
 
+    <a href="index.html" class="back-button">Back to Challenges</a>
+
+    <script src="common_functions.js"></script> <!-- Link to the new common functions file -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const completionList = document.getElementById('completion-status');
-            const issueDateElement = document.getElementById('issue-date');
+            const completionDateElement = document.getElementById('completion-date');
+            const today = new Date();
+            completionDateElement.innerText = today.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            const flagListElement = document.getElementById('flag-list');
+
+            // Retrieve the current user ID
+            const userId = getOrCreateUserId();
 
             // Define all challenge levels you want to track
             const challengeLevels = [
                 { id: 'xss-level1', name: 'XSS Level 1' },
-                { id: 'xss-level2', name: 'XSS Level 2' }, // ADDED THIS LINE
-                { id: 'sqli-level1', name: 'SQLi Level 1 (Coming Soon)' }, // Example for future levels
+                { id: 'xss-level2', name: 'XSS Level 2' },
+                { id: 'sqli-level1', name: 'SQLi Level 1' },
                 // Add more levels here as you create them:
                 // { id: 'some-other-level', name: 'Some Other Challenge' },
             ];
 
             challengeLevels.forEach(level => {
                 const completionKey = `${level.id}-completed`;
-                const flagValue = localStorage.getItem(completionKey);
+                
+                // Check if the challenge is marked as completed
+                const isCompleted = localStorage.getItem(completionKey) === 'true';
 
                 const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <span>${level.name}:</span>
-                    <span class="status"></span>
-                    <span class="flag-value"></span>
-                `;
+                listItem.classList.add('flag-item');
 
-                const statusSpan = listItem.querySelector('.status');
-                const flagValueSpan = listItem.querySelector('.flag-value');
+                const flagNameStrong = document.createElement('strong');
+                flagNameStrong.innerText = `${level.name}:`;
+                listItem.appendChild(flagNameStrong);
 
-                if (flagValue) {
-                    listItem.classList.add('completed');
-                    statusSpan.textContent = 'COMPLETED';
-                    flagValueSpan.textContent = `Flag: ${flagValue}`;
+                const flagValueSpan = document.createElement('span');
+                flagValueSpan.classList.add('flag-value');
+
+                if (isCompleted) {
+                    // If completed, deterministically generate the flag for display
+                    const generatedFlag = generateDeterministicFlag(userId, level.id);
+                    flagValueSpan.innerText = generatedFlag;
                 } else {
-                    listItem.classList.add('pending');
-                    statusSpan.textContent = 'PENDING';
-                    flagValueSpan.textContent = 'Flag: Not Acquired Yet';
+                    flagValueSpan.innerText = "NOT YET ACQUIRED";
+                    flagValueSpan.classList.add('not-completed');
                 }
-                completionList.appendChild(listItem);
+                listItem.appendChild(flagValueSpan);
+                flagListElement.appendChild(listItem);
             });
-
-            // Set the current date for the certificate
-            const today = new Date();
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            issueDateElement.textContent = today.toLocaleDateString('en-US', options);
         });
     </script>
 </body>
