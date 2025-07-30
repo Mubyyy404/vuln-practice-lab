@@ -275,6 +275,28 @@
       0% { box-shadow: var(--glow-medium); }
       100% { box-shadow: var(--glow-strong); }
     }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 50px;
+        padding: 10px 25px;
+        background: var(--color-dark-blue);
+        color: var(--color-text-light);
+        border: 1px solid var(--color-accent-blue);
+        border-radius: 5px;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--glow-soft);
+    }
+
+    .back-button:hover {
+        background: var(--color-accent-blue);
+        color: var(--color-deep-bg);
+        box-shadow: var(--glow-medium);
+        transform: translateY(-2px);
+    }
   </style>
 </head>
 
@@ -285,7 +307,7 @@
   </div>
 
   <h2>⚔️ XSS - LEVEL 1</h2>
-  <p>🎯 OBJECTIVE: INJECT A SIMPLE SCRIPT (E.G., `<script>alert('XSS');</script>`) INTO THE INPUT FIELD.</p>
+  <p>🎯 OBJECTIVE: INJECT A SIMPLE SCRIPT (E.G., `&lt;script&gt;alert('XSS');&lt;/script&gt;`) INTO THE INPUT FIELD.</p>
 
   <form method="GET">
     <input name="payload" type="text" placeholder="ENTER XSS PAYLOAD..." required>
@@ -299,6 +321,8 @@
     🎉 <strong>ACCESS GRANTED // FLAG ACQUIRED:</strong> <span id="flag-value"></span>
   </div>
 
+  <a href="index.html" class="back-button">Back to Challenges</a>
+
   <script>
     // Centralized flag generation and storage function
     function generateAndStoreFlag(level) {
@@ -307,7 +331,7 @@
         let flag = localStorage.getItem(flagKey);
 
         if (!flag) {
-            flag = `FLAG_${level.toUpperCase()}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
+            flag = `FLAG_${level.toUpperCase().replace(/-/g, '_')}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
             localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
         }
         localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
@@ -324,14 +348,9 @@
         document.getElementById("flag").style.display = "block"; // Ensure it's displayed
     }
 
-    // Override the alert function to trigger flag display upon successful XSS
-    const originalAlert = window.alert;
-    window.alert = function(msg) {
-        showFlag('xss-level1'); // Call showFlag for XSS Level 1
-        originalAlert(msg); // Still show the actual alert
-    };
-
     const output = document.getElementById("output");
+    const urlParams = new URLSearchParams(window.location.search);
+    const payload = urlParams.get("payload"); // Get the payload from the URL query parameter
 
     // Function to simulate typing effect
     function typeEffect(element, text, delay = 30) {
@@ -363,24 +382,20 @@
       typeChar();
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const payload = urlParams.get("payload"); // Get the payload from the URL query parameter
-
     if (payload) {
       // --- VULNERABILITY: DIRECT REFLECTION OF USER INPUT ---
       // For Level 1, we intentionally reflect the payload directly into the DOM
       // without any sanitization or encoding.
       // The browser will then parse and execute any valid HTML/JavaScript.
-      output.innerHTML = ">>> REFLECTED_OUTPUT:\n>_ " + payload;
-
-      // Because the output is directly written, if the payload contains an alert,
-      // it will automatically trigger. The overridden alert function will then
-      // call showFlag.
       
       // We still use typeEffect for the initial display to keep consistency.
-      // However, the real "vulnerability" here is in setting innerHTML,
-      // not in the typing effect itself.
+      // The crucial part is setting innerHTML with the raw payload.
       typeEffect(output, ">>> REFLECTED_OUTPUT:\n>_ " + payload, 20);
+
+      // Trigger the flag display directly when a payload is present.
+      // This is because the core vulnerability is the reflection itself,
+      // and any script (even one not calling alert) would signify success.
+      showFlag('xss-level1');
 
     } else {
       // If no payload, show an initial prompt in the output box
