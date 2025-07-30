@@ -285,28 +285,6 @@
       75% { transform: skewX(3deg); opacity: 0.9; }
       100% { transform: skewX(0deg); opacity: 1; }
     }
-
-    .back-button {
-        display: inline-block;
-        margin-top: 50px;
-        padding: 10px 25px;
-        background: var(--color-dark-blue);
-        color: var(--color-text-light);
-        border: 1px solid var(--color-accent-blue);
-        border-radius: 5px;
-        text-decoration: none;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: var(--glow-soft);
-    }
-
-    .back-button:hover {
-        background: var(--color-accent-blue);
-        color: var(--color-deep-bg);
-        box-shadow: var(--glow-medium);
-        transform: translateY(-2px);
-    }
   </style>
 </head>
 
@@ -336,24 +314,8 @@
   <div id="errorMessage"></div>
   <div id="output"></div>
 
-  <a href="index.html" class="back-button">Back to Challenges</a>
-
+  <script src="common_functions.js"></script> <!-- Link to the new common functions file -->
   <script>
-    // Centralized flag generation and storage function
-    function generateAndStoreFlag(level) {
-        const flagKey = `flag-${level}`; // e.g., "flag-sqli-level1"
-        const completionKey = `${level}-completed`; // e.g., "sqli-level1-completed"
-        let flag = localStorage.getItem(flagKey);
-
-        if (!flag) {
-            flag = `FLAG_${level.toUpperCase().replace(/-/g, '_')}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
-            localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
-        }
-        localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
-
-        return flag;
-    }
-
     const output = document.getElementById("output");
     const errorMessage = document.getElementById("errorMessage");
 
@@ -434,8 +396,8 @@
       }
 
       if (loginSuccess) {
-          // Generate and store the flag before redirecting
-          generateAndStoreFlag('sqli-level1'); // Store the flag for SQLi Level 1
+          // Mark completion in localStorage (only a boolean/string, not the flag itself)
+          localStorage.setItem('sqli-level1-completed', 'true');
 
           typeEffect(output, ">>> AUTHENTICATION_STATUS: " + outputMessage, 20, function() {
               // Callback function to redirect AFTER typing animation
