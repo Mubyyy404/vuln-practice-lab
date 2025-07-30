@@ -445,7 +445,7 @@
       } else if (payload.includes('<script')) {
           finalDisplayContent = `<span style="color: yellow;">Filter engaged: &lt;script&gt; tags are not allowed!</span><br>` + sanitizedPayload;
       } else {
-           finalDisplayContent = " " + sanitizedPayload;
+            finalDisplayContent = " " + sanitizedPayload;
       }
 
       // --- END LEVEL 2 SANITIZATION / VULNERABILITY LOGIC ---
