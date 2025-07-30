@@ -2,160 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Certificate - Cyber Buddy Labs</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <title>🎓 Cyber Buddy - Certificate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #0f0f0f;
-      color: #f8f9fa;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding-top: 50px;
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    .certificate {
-      border: 5px double #0ff;
+    .container {
+      background: #1c1c1c;
       padding: 30px;
-      margin-top: 20px;
-      background-color: #111;
       border-radius: 20px;
-      box-shadow: 0 0 20px #0ff;
-      max-width: 700px;
-      margin: auto;
+      box-shadow: 0 0 30px #00ffcc;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
     }
-    .certificate h2 {
-      color: #0ff;
-    }
-    .btn-download {
-      margin-top: 20px;
-    }
-    .brand {
-      margin-bottom: 30px;
-    }
-    input {
+    h1 {
+      color: #00ffcc;
       margin-bottom: 20px;
     }
-    /* New style for the uncompleted message box */
-    .not-completed-message {
-      background-color: #2a0000; /* Darker red background */
-      border: 2px solid #ff0000; /* Red border */
-      border-radius: 10px;
-      padding: 25px;
-      margin: 30px auto;
-      max-width: 600px;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); /* Red glow */
+    label {
+      display: block;
+      margin: 10px 0 5px;
     }
-    .not-completed-message h3 {
-      color: #ff3333; /* Brighter red for heading */
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
       margin-bottom: 15px;
     }
-    .not-completed-message p {
-      color: #ffa0a0; /* Lighter red for text */
-      font-size: 1.1em;
-      line-height: 1.5;
-    }
-    .uncompleted-list {
-      list-style-type: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-    .uncompleted-list li {
-      background-color: #4a0000; /* Even darker red for list items */
-      border-left: 3px solid #ff6666;
-      margin-bottom: 8px;
-      padding: 10px;
+    button {
+      padding: 10px 20px;
+      background: #00ffcc;
+      color: black;
+      border: none;
+      border-radius: 10px;
       font-weight: bold;
-      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00ccaa;
+    }
+    .hidden {
+      display: none;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
-
-  <div class="brand">
-    <h1>🎓 Cyber Buddy Vulnerability Labs</h1>
-    <p>Auto Certificate Generator</p>
+  <div class="container">
+    <h1>🎉 Get Your Completion Certificate</h1>
+    <div id="formSection" class="hidden">
+      <label for="username">Enter your name for the certificate:</label>
+      <input type="text" id="username" placeholder="Your full name" />
+      <button onclick="generateCertificate()">Generate Certificate</button>
+    </div>
+    <div id="errorSection" class="error hidden">
+      ❌ Access Denied: Labs Incomplete!
+    </div>
   </div>
 
-  <div id="certificate-area"></div>
-
   <script>
-    // IMPORTANT: These keys must match what you set in your xss-levelX.html files.
-    const requiredLevels = ["xss-level1-completed", "xss-level2-completed"];
-    // Map internal localStorage keys to user-friendly names
-    const levelDisplayNames = {
-      "xss-level1-completed": "XSS Level 1",
-      "xss-level2-completed": "XSS Level 2",
-      // Add more levels here if you expand:
-      // "xss-level3-completed": "XSS Level 3"
-    };
+    // Check if XSS Level 1 is completed
+    const completed = localStorage.getItem("xss-level1-completed") === "true";
 
-    let allCompleted = true;
-    const uncompletedLabs = [];
-
-    // Check each required level
-    requiredLevels.forEach(levelKey => {
-      if (localStorage.getItem(levelKey) !== "true") {
-        allCompleted = false;
-        // Add the user-friendly name of the uncompleted lab
-        uncompletedLabs.push(levelDisplayNames[levelKey] || levelKey.replace('-completed', ''));
-      }
-    });
-
-    if (!allCompleted) {
-      const uncompletedListHtml = uncompletedLabs.length > 0
-        ? `<p>The following labs are still pending completion:</p><ul class="uncompleted-list">${uncompletedLabs.map(lab => `<li>${lab}</li>`).join('')}</ul>`
-        : ''; // Fallback, though uncompletedLabs should have items if !allCompleted
-
-      document.getElementById("certificate-area").innerHTML = `
-        <div class="not-completed-message">
-          <h3>❌ Access Denied: Labs Incomplete!</h3>
-          <p>You must successfully complete all designated Cyber Buddy Vulnerability Labs to unlock your certificate.</p>
-          ${uncompletedListHtml}
-          <p>Please revisit the challenges and exploit each vulnerability to earn your flags.</p>
-        </div>`;
+    if (completed) {
+      document.getElementById("formSection").classList.remove("hidden");
     } else {
-      document.getElementById("certificate-area").innerHTML = `
-        <div>
-          <input type="text" id="nameInput" class="form-control w-50 mx-auto" placeholder="Enter your name for the certificate" />
-          <button class="btn btn-success mt-2" onclick="generateCertificate()">Generate Certificate</button>
-        </div>
-        <div id="generatedCertificate" class="certificate d-none">
-          <h2>Certificate of Completion</h2>
-          <p>This is to certify that</p>
-          <h3 id="certName"></h3>
-          <p>has successfully completed all XSS vulnerability tasks in the</p>
-          <strong>Cyber Buddy Vulnerability Labs</strong>
-          <br><br>
-          <p><i>Date: <span id="certDate"></span></i></p>
-          <button class="btn btn-primary btn-download" onclick="downloadCertificate()">Download Certificate</button>
-        </div>`;
+      document.getElementById("errorSection").classList.remove("hidden");
     }
 
     function generateCertificate() {
-      const name = document.getElementById("nameInput").value.trim();
-      if (!name) {
+      const name = document.getElementById("username").value.trim();
+      if (name === "") {
         alert("Please enter your name.");
         return;
       }
 
-      document.getElementById("certName").innerText = name;
-      document.getElementById("certDate").innerText = new Date().toLocaleDateString();
-      
-      // Hide the input/button and show the certificate
-      document.getElementById("certificate-area").querySelector('div:first-child').classList.add('d-none');
-      document.getElementById("generatedCertificate").classList.remove("d-none");
-    }
-
-    function downloadCertificate() {
-      const element = document.getElementById("generatedCertificate");
-      html2canvas(element, { scale: 2, backgroundColor: '#111' }).then(canvas => { // Added scale for better resolution
-        const link = document.createElement('a');
-        link.download = 'CyberBuddy_Certificate.png';
-        link.href = canvas.toDataURL('image/png', 1.0); // Specify image type and quality
-        link.click();
-      });
+      // Redirect with name to certificate page (replace with your Canva template logic)
+      const certificateURL = `https://your-certificate-page.com/?name=${encodeURIComponent(name)}`;
+      window.open(certificateURL, "_blank");
     }
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
