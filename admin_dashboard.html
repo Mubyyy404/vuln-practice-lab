@@ -207,16 +207,6 @@
             0% { box-shadow: var(--glow-medium); }
             100% { box-shadow: var(--glow-strong); }
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .dashboard-header h1 {
-                font-size: 2.5rem;
-            }
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
@@ -271,43 +261,30 @@
         🎉 <strong>ACCESS GRANTED // FLAG ACQUIRED:</strong> <span id="flag-value"></span>
     </div>
 
+    <script src="common_functions.js"></script> <!-- Link to the new common functions file -->
     <script>
-        // Centralized flag generation and storage function
-        function generateAndStoreFlag(level) {
-            const flagKey = `flag-${level}`; // e.g., "flag-sqli-level1"
-            const completionKey = `${level}-completed`; // e.g., "sqli-level1-completed"
-            let flag = localStorage.getItem(flagKey);
-
-            if (!flag) {
-                flag = `FLAG_${level.toUpperCase().replace(/-/g, '_')}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
-                localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
-            }
-            localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
-
-            return flag;
-        }
-
-        // Function to display the flag on the page
-        function displayFlag() {
+        // Function to display the flag on the dashboard page
+        function displayFlagForLevel() {
             const urlParams = new URLSearchParams(window.location.search);
             const level = urlParams.get('level'); // Get the level from URL, e.g., 'sqli-level1'
 
             if (level) {
-                const flagValue = generateAndStoreFlag(level);
+                // Ensure userId is available (it should be set by common_functions.js)
+                const userId = getOrCreateUserId(); 
+                const flagValue = generateDeterministicFlag(userId, level);
+
                 document.getElementById("flag-value").innerText = flagValue;
                 document.getElementById("flag").style.opacity = 1; // Make flag visible
                 document.getElementById("flag").style.transform = "scale(1) translateY(0)"; // Reset transform
                 document.getElementById("flag").style.display = "block"; // Ensure it's displayed
             } else {
-                // Fallback or handle cases where level is not provided in URL
-                // If the page is accessed directly without a 'level' parameter, it won't show a flag.
-                console.warn("No 'level' parameter found in URL for flag display.");
+                console.warn("No 'level' parameter found in URL for flag display on dashboard.");
                 document.getElementById("flag").style.display = "none"; // Hide flag if no level is passed
             }
         }
 
         // Display flag when the dashboard page loads
-        document.addEventListener('DOMContentLoaded', displayFlag);
+        document.addEventListener('DOMContentLoaded', displayFlagForLevel);
     </script>
 </body>
 </html>
