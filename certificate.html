@@ -1,563 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>🏆 Cyber Buddy - Certificate of Completion</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* Global Variables for easy theme management (Consistent with Challenges) */
-    :root {
-      --color-accent-blue: #00ffff;
-      --color-dark-blue: #004e92;
-      --color-deep-bg: #000428;
-      --color-text-light: #e0f7fa;
-      --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
-      --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
-      --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
-      --color-green: #00ff80; /* For completion status */
-      --color-red: #ff3366;   /* For pending status */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Certificate of Completion - Cyber Buddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Variables for easy theme management */
+        :root {
+            --color-accent-blue: #00ffff;
+            --color-dark-blue: #004e92;
+            --color-deep-bg: #000428;
+            --color-text-light: #e0f7fa;
+            --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
+            --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
+            --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
+            --color-certificate-bg: rgba(0, 10, 30, 0.9);
+            --color-certificate-border: var(--color-accent-blue);
+        }
 
-    body {
-      margin: 0;
-      padding: 50px 20px;
-      background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
-      font-family: 'Fira Code', monospace;
-      color: var(--color-text-light);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start; /* Align content to top for longer pages */
-    }
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
+            font-family: 'Fira Code', monospace;
+            color: var(--color-text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+        }
 
-    /* Animated background elements (Consistent with Challenges) */
-    body::before, body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      pointer-events: none;
-    }
+        /* Animated background elements (grid/scanline) */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
 
-    body::before {
-      background-image:
-        repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
-        repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
-      background-size: 40px 40px;
-      opacity: 0.05;
-      animation: backgroundPulse 15s infinite alternate;
-    }
+        /* Grid/Matrix Overlay */
+        body::before {
+            background-image:
+                repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
+                repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
+            background-size: 40px 40px;
+            opacity: 0.05;
+            animation: backgroundPulse 15s infinite alternate;
+        }
 
-    @keyframes backgroundPulse {
-      0% { opacity: 0.05; }
-      100% { opacity: 0.08; }
-    }
+        @keyframes backgroundPulse {
+            0% { opacity: 0.05; }
+            100% { opacity: 0.08; }
+        }
 
-    body::after {
-      background: linear-gradient(
-        transparent 0%,
-        rgba(0, 255, 255, 0.05) 50%,
-        transparent 100%
-      );
-      animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
-    }
+        /* Glitch/Scanline effect overlay */
+        body::after {
+            background: linear-gradient(
+                transparent 0%,
+                rgba(0, 255, 255, 0.05) 50%,
+                transparent 100%
+            );
+            animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
+        }
 
-    @keyframes scanline {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
 
-    @keyframes minorGlitch {
-      0%, 100% { clip-path: inset(0 0 0 0); }
-      10% { clip-path: inset(1% 0 99% 0); }
-      30% { clip-path: inset(40% 0 59% 0); }
-      70% { clip-path: inset(80% 0 19% 0); }
-    }
+        @keyframes minorGlitch {
+            0%, 100% { clip-path: inset(0 0 0 0); }
+            10% { clip-path: inset(1% 0 99% 0); }
+            30% { clip-path: inset(40% 0 59% 0); }
+            70% { clip-path: inset(80% 0 19% 0); }
+        }
 
-    /* --- BRANDING ELEMENTS (Consistent with Challenges) --- */
-    .brand-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.25;
-      text-shadow: var(--glow-soft);
-      animation: brandFlicker 2s infinite alternate;
-    }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            color: var(--color-accent-blue);
+            text-shadow: var(--glow-strong);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            animation: flicker 1.5s infinite alternate;
+            text-align: center;
+        }
 
-    @keyframes brandFlicker {
-      0% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-      100% { opacity: 0.28; transform: translate(-50%, -50%) scale(1.005); }
-    }
+        @keyframes flicker {
+          0%, 100% { text-shadow: var(--glow-medium); }
+          50% { text-shadow: var(--glow-strong); }
+        }
 
-    .brand-logo {
-      width: 35vw;
-      max-width: 400px;
-      filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
-      margin-bottom: 25px;
-    }
+        .certificate-container {
+            background-color: var(--color-certificate-bg);
+            border: 3px solid var(--color-certificate-border);
+            border-radius: 15px;
+            padding: 50px;
+            box-shadow: var(--glow-strong);
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 40px;
+            animation: pulseBorder 3s infinite alternate;
+        }
 
-    .brand-text {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9vw;
-      max-font-size: 130px;
-      color: var(--color-accent-blue);
-      text-transform: uppercase;
-      letter-spacing: 7px;
-      text-shadow: var(--glow-strong);
-    }
-    /* --- END BRANDING ELEMENTS --- */
+        @keyframes pulseBorder {
+          0% { border-color: var(--color-accent-blue); box-shadow: var(--glow-strong); }
+          100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 25px var(--color-accent-blue), 0 0 50px rgba(0, 255, 255, 0.7); }
+        }
 
-    h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.8rem;
-      color: var(--color-accent-blue);
-      text-shadow: var(--glow-medium);
-      animation: flicker 1.2s infinite alternate;
-      z-index: 1;
-      position: relative;
-      letter-spacing: 2px;
-      margin-bottom: 25px;
-    }
+        .certificate-container h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: var(--glow-medium);
+        }
 
-    .container {
-      background-color: rgba(0, 5, 20, 0.7);
-      border: 1px solid var(--color-accent-blue);
-      border-radius: 8px;
-      box-shadow: var(--glow-soft);
-      padding: 30px;
-      max-width: 800px;
-      width: 90%;
-      margin-top: 30px;
-      z-index: 1;
-      position: relative;
-      animation: pulseBorder 3s infinite alternate;
-      text-align: left; /* Align content inside container to left */
-    }
+        .certificate-container p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: var(--color-text-light);
+        }
 
-    @keyframes pulseBorder {
-      0% { border-color: var(--color-accent-blue); box-shadow: var(--glow-soft); }
-      100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: var(--glow-medium); }
-    }
+        .certificate-signature {
+            margin-top: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.3rem;
+            color: var(--color-accent-blue);
+            text-shadow: var(--glow-soft);
+        }
 
-    h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      color: var(--color-text-light);
-      text-shadow: var(--glow-soft);
-      margin-bottom: 20px;
-      text-align: center; /* Center heading within container */
-    }
+        .flag-section {
+            margin-top: 40px;
+            border-top: 1px dashed rgba(0, 255, 255, 0.3);
+            padding-top: 30px;
+            text-align: left;
+        }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 30px;
-    }
+        .flag-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--color-accent-blue);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: var(--glow-soft);
+        }
 
-    li {
-      font-size: 1.1rem;
-      padding: 10px 0;
-      border-bottom: 1px dashed rgba(0, 255, 255, 0.2);
-      display: flex;
-      flex-wrap: wrap; /* Allow wrapping for smaller screens */
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px; /* Space between elements in the list item */
-    }
+        .flag-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    li:last-child {
-      border-bottom: none;
-    }
+        .flag-item {
+            background-color: rgba(0, 5, 20, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+        }
 
-    .challenge-info {
-        flex-grow: 1; /* Allows challenge name and status to take available space */
-    }
+        .flag-item strong {
+            color: var(--color-text-light);
+            flex-grow: 1;
+        }
 
-    .status-completed {
-      color: var(--color-green);
-      font-weight: bold;
-      text-shadow: 0 0 8px rgba(0, 255, 128, 0.5);
-    }
+        .flag-value {
+            color: #00ff00; /* Green for flags */
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+            font-size: 0.9rem; /* Smaller for long flags */
+            word-break: break-all; /* Break long flags */
+            margin-left: 15px;
+        }
 
-    .status-pending {
-      color: var(--color-red);
-      font-weight: bold;
-      text-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
-    }
+        .flag-value.not-completed {
+            color: #ffcc00; /* Yellow for not completed */
+            font-style: italic;
+        }
 
-    /* Animated Input Field Styles */
-    .input-group {
-      position: relative;
-      width: 250px; /* Adjust as needed */
-      margin-left: auto; /* Push to the right */
-    }
+        .back-button {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 10px 25px;
+            background: var(--color-dark-blue);
+            color: var(--color-text-light);
+            border: 1px solid var(--color-accent-blue);
+            border-radius: 5px;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow-soft);
+        }
 
-    .flag-input {
-      width: 100%;
-      padding: 10px 10px 10px 5px;
-      font-size: 1rem;
-      color: var(--color-text-light);
-      border: none;
-      border-bottom: 2px solid var(--color-accent-blue);
-      outline: none;
-      background: transparent;
-      transition: all 0.3s ease;
-      font-family: 'Fira Code', monospace;
-    }
+        .back-button:hover {
+            background: var(--color-accent-blue);
+            color: var(--color-deep-bg);
+            box-shadow: var(--glow-medium);
+            transform: translateY(-2px);
+        }
 
-    .flag-input:focus {
-      border-bottom: 2px solid var(--color-green);
-      box-shadow: 0 2px 10px rgba(0, 255, 128, 0.3);
-    }
-
-    .flag-input::placeholder {
-      color: rgba(224, 247, 250, 0.5);
-    }
-
-    .flag-input:focus::placeholder {
-        color: transparent; /* Hide placeholder on focus */
-    }
-
-    .flag-input-label {
-      position: absolute;
-      top: 10px;
-      left: 5px;
-      color: rgba(0, 255, 255, 0.7);
-      font-size: 1rem;
-      pointer-events: none;
-      transition: all 0.3s ease;
-    }
-
-    .flag-input:focus ~ .flag-input-label,
-    .flag-input:not(:placeholder-shown) ~ .flag-input-label {
-      top: -15px;
-      font-size: 0.8rem;
-      color: var(--color-accent-blue);
-      text-shadow: var(--glow-soft);
-    }
-
-    .submit-flag-btn {
-        background: linear-gradient(90deg, #007bff, #0056b3);
-        border: none;
-        border-radius: 20px;
-        color: white;
-        padding: 8px 15px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        margin-left: 10px; /* Space between input and button */
-        font-family: 'Fira Code', monospace;
-    }
-
-    .submit-flag-btn:hover {
-        background: linear-gradient(90deg, #0056b3, #007bff);
-        box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);
-        transform: translateY(-1px);
-    }
-
-    .submit-flag-btn:disabled {
-        background: #333;
-        cursor: not-allowed;
-        opacity: 0.6;
-        box-shadow: none;
-    }
-
-
-    button {
-      margin-top: 25px;
-      padding: 15px 35px;
-      font-size: 1.2rem;
-      background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
-      border: none;
-      border-radius: 50px;
-      font-weight: bold;
-      color: var(--color-deep-bg);
-      cursor: pointer;
-      box-shadow: var(--glow-medium);
-      transition: all 0.3s ease, transform 0.2s ease-out;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-family: 'Orbitron', sans-serif;
-    }
-
-    button:hover:not(:disabled) {
-      background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
-      box-shadow: var(--glow-strong);
-      transform: translateY(-3px);
-    }
-
-    button:disabled {
-      background: #333;
-      cursor: not-allowed;
-      opacity: 0.6;
-      box-shadow: none;
-    }
-
-    #certificate-area {
-      display: none; /* Hidden by default */
-      margin-top: 40px;
-      background: linear-gradient(145deg, rgba(0, 20, 40, 0.9), rgba(0, 40, 80, 0.9));
-      border: 2px solid var(--color-accent-blue);
-      border-radius: 15px;
-      box-shadow: 0 0 30px var(--color-accent-blue), inset 0 0 15px rgba(0, 255, 255, 0.5);
-      padding: 50px;
-      width: 90%;
-      max-width: 800px;
-      text-align: center;
-      animation: certificateAppear 1s forwards;
-      color: var(--color-text-light);
-      font-family: 'Share Tech Mono', monospace;
-    }
-
-    @keyframes certificateAppear {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .cert-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3.5rem;
-      color: var(--color-accent-blue);
-      text-shadow: var(--glow-strong);
-      margin-bottom: 20px;
-      letter-spacing: 3px;
-    }
-
-    .cert-subtitle {
-      font-size: 1.5rem;
-      margin-bottom: 30px;
-      color: rgba(0, 255, 255, 0.8);
-    }
-
-    .cert-name {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.2rem;
-      font-weight: bold;
-      color: var(--color-text-light);
-      text-shadow: var(--glow-medium);
-      margin-top: 40px;
-      margin-bottom: 10px;
-    }
-
-    .cert-date {
-      font-size: 1.1rem;
-      color: rgba(0, 255, 255, 0.7);
-      margin-bottom: 50px;
-    }
-
-    .cert-signature {
-      margin-top: 60px;
-      padding-top: 20px;
-      border-top: 1px dashed rgba(0, 255, 255, 0.3);
-      font-size: 1.2rem;
-      color: var(--color-accent-blue);
-      text-shadow: var(--glow-soft);
-    }
-
-    .cert-footer-logo {
-      width: 100px;
-      filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
-      margin-top: 20px;
-    }
-
-    /* Print styles */
-    @media print {
-      body {
-        background: none;
-        color: black;
-        -webkit-print-color-adjust: exact; /* For background colors */
-      }
-      body::before, body::after, .brand-container {
-        display: none !important;
-      }
-      .container, h2, #checkStatusBtn {
-        display: none !important;
-      }
-      #certificate-area {
-        display: block !important;
-        position: static !important;
-        margin: 0;
-        width: 100%;
-        max-width: none;
-        background: white;
-        color: black;
-        border: 2px solid #000;
-        box-shadow: none;
-        padding: 20mm;
-      }
-      .cert-title, .cert-subtitle, .cert-name, .cert-date, .cert-signature, .cert-footer-logo {
-        color: black !important;
-        text-shadow: none !important;
-        filter: none !important;
-      }
-      button.print-btn {
-        display: none; /* Hide print button on printout */
-      }
-    }
-  </style>
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .certificate-container {
+                padding: 30px;
+            }
+            .certificate-container h2 {
+                font-size: 2rem;
+            }
+            .certificate-container p, .flag-item {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="brand-container">
-    <img src="buddy-removebg-preview.png" alt="Cyber Buddy Logo" class="brand-logo">
-    <div class="brand-text">Cyber Buddy</div>
-  </div>
+    <h1>Certificate of Completion</h1>
 
-  <h2>🏆 Your Certification Progress</h2>
-  <div class="container">
-    <h3>Challenge Completion Status:</h3>
-    <ul id="challenge-list">
-      </ul>
-    <p style="text-align: center; font-size: 1.1rem; color: rgba(0,255,255,0.7);">Complete all challenges to generate your certificate!</p>
-    <button id="generateCertBtn" disabled>GENERATE CERTIFICATE</button>
-  </div>
+    <div class="certificate-container">
+        <h2>Cyber Security Challenge Series</h2>
+        <p>This certifies that</p>
+        <p style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: #fff; text-shadow: var(--glow-medium);">A DEDICATED LEARNER</p>
+        <p>has successfully completed the foundational challenges in the Cyber Buddy series, demonstrating proficiency in identifying and exploiting common web vulnerabilities.</p>
+        <p class="certificate-signature">
+            Cyber Buddy Security Team <br>
+            Date: <span id="completion-date"></span>
+        </p>
 
-  <div id="certificate-area">
-    <div class="cert-title">CERTIFICATE</div>
-    <div class="cert-subtitle">OF COMPLETION</div>
-    <p>This certifies that</p>
-    <div class="cert-name" id="cert-recipient-name">[Your Name Here]</div>
-    <p>has successfully completed the Cyber Security Fundamentals challenges.</p>
-    <div class="cert-date" id="cert-date"></div>
-    <div class="cert-signature">Cyber Buddy Team</div>
-    <img src="buddy-removebg-preview.png" alt="Cyber Buddy Logo" class="cert-footer-logo">
-    <button class="print-btn" onclick="window.print()">PRINT CERTIFICATE</button>
-  </div>
+        <div class="flag-section">
+            <h3>Acquired Flags:</h3>
+            <ul id="flag-list" class="flag-list">
+                </ul>
+        </div>
+    </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const challengeListElement = document.getElementById("challenge-list");
-      const generateCertBtn = document.getElementById("generateCertBtn");
-      const certificateArea = document.getElementById("certificate-area");
-      const certDateElement = document.getElementById("cert-date");
-      const certRecipientNameElement = document.getElementById("cert-recipient-name");
+    <a href="index.html" class="back-button">Back to Challenges</a>
 
-      // Define your challenges here with a correctFlag property.
-      // IMPORTANT: For a real application, NEVER store actual flags client-side for security.
-      // Flags should be validated on a secure backend server. This is for demonstration only.
-      const challengeList = [
-        { name: "XSS Fundamentals - Level 1", key: "xss-level1-completed", correctFlag: "FLAG_XSS_COMPLETED_1" },
-        { name: "SQL Injection - Level 1", key: "sql-level1-completed", correctFlag: "FLAG_SQL_COMPLETED_1" },
-        { name: "Command Injection - Level 1", key: "injection-level1-completed", correctFlag: "FLAG_CMD_COMPLETED_1" },
-        { name: "Broken Authentication - Level 1", key: "auth-level1-completed", correctFlag: "FLAG_AUTH_COMPLETED_1" },
-        // Add more challenges here:
-        // { name: "New Challenge Name", key: "new-challenge-key-completed", correctFlag: "YOUR_NEW_FLAG_HERE" },
-      ];
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const completionDateElement = document.getElementById('completion-date');
+            const today = new Date();
+            completionDateElement.innerText = today.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
 
-      let allChallengesCompleted = true;
+            const flagListElement = document.getElementById('flag-list');
 
-      function updateChallengeStatus() {
-        challengeListElement.innerHTML = ''; // Clear previous list
-        allChallengesCompleted = true; // Reset for recalculation
+            // Define all challenge levels you want to track
+            const challengeLevels = [
+                { id: 'xss-level1', name: 'XSS Level 1' },
+                { id: 'sqli-level1', name: 'SQLi Level 1' },
+                // Add more levels here as you create them:
+                // { id: 'xss-level2', name: 'XSS Level 2' },
+                // { id: 'sqli-level2', name: 'SQLi Level 2' },
+            ];
 
-        challengeList.forEach(challenge => {
-          const isCompleted = localStorage.getItem(challenge.key) === "true";
-          const statusText = isCompleted ? "Completed ✅" : "Pending ❌";
-          const statusClass = isCompleted ? "status-completed" : "status-pending";
+            challengeLevels.forEach(level => {
+                const completionKey = `${level.id}-completed`;
+                const flagKey = `flag-${level.id}`;
+                
+                const completedFlag = localStorage.getItem(completionKey);
+                const actualFlagValue = localStorage.getItem(flagKey);
 
-          const listItem = document.createElement("li");
-          listItem.innerHTML = `
-            <div class="challenge-info">
-                <span>${challenge.name}:</span>
-                <span id="${challenge.key}-status" class="${statusClass}">${statusText}</span>
-            </div>
-            ${!isCompleted ? `
-            <div class="input-group">
-                <input type="text" id="${challenge.key}-flag-input" class="flag-input" placeholder=" " autocomplete="off">
-                <label for="${challenge.key}-flag-input" class="flag-input-label">Enter Flag</label>
-                <button class="submit-flag-btn" data-challenge-key="${challenge.key}">Submit</button>
-            </div>
-            ` : ''}
-          `;
-          challengeListElement.appendChild(listItem);
+                const listItem = document.createElement('li');
+                listItem.classList.add('flag-item');
 
-          if (!isCompleted) {
-            allChallengesCompleted = false;
-          }
-        });
+                const flagNameStrong = document.createElement('strong');
+                flagNameStrong.innerText = `${level.name}:`;
+                listItem.appendChild(flagNameStrong);
 
-        // Add event listeners to the new submit buttons
-        document.querySelectorAll('.submit-flag-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const challengeKey = event.target.dataset.challengeKey;
-                const inputElement = document.getElementById(`${challengeKey}-flag-input`);
-                const enteredFlag = inputElement.value.trim();
+                const flagValueSpan = document.createElement('span');
+                flagValueSpan.classList.add('flag-value');
 
-                const challenge = challengeList.find(c => c.key === challengeKey);
-
-                if (challenge && enteredFlag === challenge.correctFlag) {
-                    localStorage.setItem(challengeKey, "true");
-                    alert(`Flag for "${challenge.name}" is correct! Challenge completed.`);
-                    updateChallengeStatus(); // Re-render the list to update status
+                if (completedFlag) {
+                    flagValueSpan.innerText = actualFlagValue || "FLAG_MISSING_ERROR"; // Fallback in case only completion is set
                 } else {
-                    alert(`Incorrect flag for "${challenge.name}". Please try again.`);
-                    inputElement.value = ''; // Clear input on incorrect flag
+                    flagValueSpan.innerText = "NOT YET ACQUIRED";
+                    flagValueSpan.classList.add('not-completed');
                 }
+                listItem.appendChild(flagValueSpan);
+                flagListElement.appendChild(listItem);
             });
         });
-
-        if (allChallengesCompleted) {
-          generateCertBtn.disabled = false;
-          generateCertBtn.textContent = "GENERATE CERTIFICATE";
-          generateCertBtn.style.background = 'linear-gradient(90deg, var(--color-green), #00cc66)';
-          generateCertBtn.style.boxShadow = 'var(--glow-strong)';
-          generateCertBtn.onmouseover = () => {
-            generateCertBtn.style.background = 'linear-gradient(90deg, #00cc66, var(--color-green))';
-          };
-          generateCertBtn.onmouseout = () => {
-            generateCertBtn.style.background = 'linear-gradient(90deg, var(--color-green), #00cc66)';
-          };
-        } else {
-          generateCertBtn.disabled = true;
-          generateCertBtn.textContent = "MORE CHALLENGES TO GO!";
-          // Reset to default disabled style
-          generateCertBtn.style.background = '';
-          generateCertBtn.style.boxShadow = '';
-          generateCertBtn.onmouseover = null;
-          generateCertBtn.onmouseout = null;
-        }
-      }
-
-      // Initial status update
-      updateChallengeStatus();
-
-      // You might want to refresh the status if a user comes back to this page
-      // after completing a challenge in another tab.
-      window.addEventListener('storage', updateChallengeStatus); // Listens for localStorage changes across tabs
-
-      generateCertBtn.addEventListener("click", () => {
-        if (allChallengesCompleted) {
-          const userName = prompt("Enter your name for the certificate:");
-          if (userName) {
-            certRecipientNameElement.innerText = userName;
-            certDateElement.innerText = new Date().toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            });
-            certificateArea.style.display = "block";
-            // Scroll to the certificate
-            certificateArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else {
-            alert("Certificate generation cancelled. Please enter a name.");
-          }
-        }
-      });
-    });
-  </script>
+    </script>
 </body>
 </html>
