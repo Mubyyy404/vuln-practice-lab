@@ -315,6 +315,21 @@
   <div id="output"></div>
 
   <script>
+    // Centralized flag generation and storage function
+    function generateAndStoreFlag(level) {
+        const flagKey = `flag-${level}`; // e.g., "flag-sqli-level1"
+        const completionKey = `${level}-completed`; // e.g., "sqli-level1-completed"
+        let flag = localStorage.getItem(flagKey);
+
+        if (!flag) {
+            flag = `FLAG_${level.toUpperCase().replace(/-/g, '_')}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
+            localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
+        }
+        localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
+
+        return flag;
+    }
+
     const output = document.getElementById("output");
     const errorMessage = document.getElementById("errorMessage");
 
@@ -331,11 +346,11 @@
           if (text.charAt(i) === '<') {
               let tagEnd = text.indexOf('>', i);
               if (tagEnd !== -1) {
-                  element.innerHTML += text.substring(i, tagEnd + 1);
-                  i = tagEnd + 1;
+                element.innerHTML += text.substring(i, tagEnd + 1);
+                i = tagEnd + 1;
               } else {
-                  element.innerHTML += text.charAt(i);
-                  i++;
+                element.innerHTML += text.charAt(i);
+                i++;
               }
           } else {
               element.innerHTML += text.charAt(i);
@@ -375,6 +390,8 @@
       const acceptedSqlInjectionPayloads = [
           "' or 1=1--",
           "' or 1=1 --",
+          ' or 1=1--
+          ' OR 1=1
           "' or '1'='1",
           "' or 1=1#",
           "' or 1=1 /*",
@@ -397,9 +414,12 @@
       }
 
       if (loginSuccess) {
+          // Generate and store the flag before redirecting
+          generateAndStoreFlag('sqli-level1'); // Store the flag for SQLi Level 1
+
           typeEffect(output, ">>> AUTHENTICATION_STATUS: " + outputMessage, 20, function() {
               // Callback function to redirect AFTER typing animation
-              window.location.href = 'admin_dashboard.html';
+              window.location.href = 'admin_dashboard.html?level=sqli-level1'; // Pass level to dashboard
           });
       } else {
           displayError(">>> AUTHENTICATION_FAILED: Invalid Username or Password. Please try again.");
