@@ -18,14 +18,14 @@
 
     body {
       margin: 0;
-      padding: 50px 20px; /* More generous padding */
-      background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%); /* Deeper, more dynamic gradient */
-      font-family: 'Fira Code', monospace; /* A more modern coding font */
+      padding: 50px 20px;
+      background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
+      font-family: 'Fira Code', monospace;
       color: var(--color-text-light);
       text-align: center;
       position: relative;
-      overflow: hidden; /* Important for background animations */
-      min-height: 100vh; /* Full viewport height */
+      overflow: hidden;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -40,7 +40,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -2; /* Set to -2 to ensure they are behind the branding */
+      z-index: -2;
       pointer-events: none;
     }
 
@@ -87,13 +87,13 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: -1; /* Set to -1 to place it behind the main content but above the deepest background */
+      z-index: -1;
       pointer-events: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      opacity: 0.25; /* Maintain good visibility */
+      opacity: 0.25;
       text-shadow: var(--glow-soft);
       animation: brandFlicker 2s infinite alternate;
     }
@@ -104,20 +104,20 @@
     }
 
     .brand-logo {
-      width: 35vw; /* Slightly larger responsive size */
-      max-width: 400px; /* Increased max size for larger screens */
-      filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8); /* Stronger blue glow around logo */
-      margin-bottom: 25px; /* More space between logo and text */
+      width: 35vw;
+      max-width: 400px;
+      filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
+      margin-bottom: 25px;
     }
 
     .brand-text {
-      font-family: 'Orbitron', sans-serif; /* Futuristic font for brand name */
-      font-size: 9vw; /* Slightly larger responsive font size */
-      max-font-size: 130px; /* Increased max size */
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9vw;
+      max-font-size: 130px;
       color: var(--color-accent-blue);
       text-transform: uppercase;
-      letter-spacing: 7px; /* More pronounced letter spacing */
-      text-shadow: var(--glow-strong); /* Stronger text glow */
+      letter-spacing: 7px;
+      text-shadow: var(--glow-strong);
     }
     /* --- END BRANDING ELEMENTS --- */
 
@@ -128,8 +128,8 @@
       color: var(--color-accent-blue);
       text-shadow: var(--glow-medium);
       animation: flicker 1.2s infinite alternate;
-      z-index: 1; /* Ensure this is above branding */
-      position: relative; /* Needed for z-index to work */
+      z-index: 1;
+      position: relative;
       letter-spacing: 2px;
       margin-bottom: 15px;
     }
@@ -140,35 +140,35 @@
       text-shadow: var(--glow-soft);
       margin-bottom: 40px;
       line-height: 1.6;
-      z-index: 1; /* Ensure this is above branding */
-      position: relative; /* Needed for z-index to work */
+      z-index: 1;
+      position: relative;
     }
 
     form {
       margin-top: 40px;
       position: relative;
-      z-index: 1; /* Ensure this is above branding */
+      z-index: 1;
       width: 100%;
-      max-width: 700px; /* Wider form */
+      max-width: 700px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     input[type="text"] {
-      width: calc(100% - 40px); /* Account for padding */
+      width: calc(100% - 40px);
       padding: 18px 20px;
       font-size: 1.15rem;
-      border-radius: 5px; /* Slightly rounded for modern tech feel */
+      border-radius: 5px;
       border: 1px solid var(--color-accent-blue);
-      background-color: rgba(0, 5, 20, 0.7); /* Translucent dark background */
+      background-color: rgba(0, 5, 20, 0.7);
       color: var(--color-accent-blue);
       outline: none;
       box-shadow: var(--glow-soft), inset 0 0 8px rgba(0, 255, 255, 0.3);
       transition: all 0.3s ease-in-out;
       font-family: 'Fira Code', monospace;
-      z-index: 1; /* Ensure this is above branding */
-      position: relative; /* Needed for z-index to work */
+      z-index: 1;
+      position: relative;
     }
 
     input[type="text"]::placeholder {
@@ -187,45 +187,44 @@
       font-size: 1.2rem;
       background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
       border: none;
-      border-radius: 50px; /* Pill shape */
+      border-radius: 50px;
       font-weight: bold;
-      color: var(--color-darker-bg); /* Dark text on button */
+      color: var(--color-deep-bg);
       cursor: pointer;
       box-shadow: var(--glow-medium);
       transition: all 0.3s ease, transform 0.2s ease-out;
       text-transform: uppercase;
       letter-spacing: 1px;
       font-family: 'Orbitron', sans-serif;
-      z-index: 1; /* Ensure this is above branding */
-      position: relative; /* Needed for z-index to work */
+      z-index: 1;
+      position: relative;
     }
 
     button:hover {
       background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
       box-shadow: var(--glow-strong);
-      transform: translateY(-3px); /* Lift effect */
+      transform: translateY(-3px);
     }
 
     #output {
       margin-top: 50px;
       padding: 25px;
-      background-color: rgba(0, 5, 20, 0.7); /* Translucent dark background */
+      background-color: rgba(0, 5, 20, 0.7);
       color: var(--color-text-light);
       border: 1px solid var(--color-accent-blue);
       border-radius: 8px;
       box-shadow: var(--glow-soft);
-      /* Fixed output box scaling */
-      width: calc(100% - 100px); /* Consistent width */
-      max-width: 800px; /* Max width for larger screens */
-      min-height: 100px; /* Standard minimum height */
-      height: auto; /* Allow height to adjust based on content */
+      width: calc(100% - 100px);
+      max-width: 800px;
+      min-height: 100px;
+      height: auto;
       position: relative;
-      z-index: 1; /* Ensure this is above branding */
+      z-index: 1;
       font-size: 1rem;
       overflow-wrap: break-word;
       text-align: left;
       line-height: 1.5;
-      animation: pulseBorder 3s infinite alternate; /* Subtle pulsing border */
+      animation: pulseBorder 3s infinite alternate;
     }
 
     @keyframes pulseBorder {
@@ -235,9 +234,9 @@
 
     /* Typing animation styles for output */
     .typing-effect::after {
-      content: '|'; /* Blinking cursor */
+      content: '|';
       animation: blink-caret 0.75s step-end infinite;
-      display: inline-block; /* Keep cursor with text */
+      display: inline-block;
     }
 
     /* Keyframes for the blinking cursor */
@@ -247,19 +246,19 @@
     }
 
     #flag {
-      display: none;
+      display: none; /* Hidden by default */
       margin-top: 40px;
       padding: 25px;
-      background: rgba(0, 15, 30, 0.9); /* More opaque for visibility */
+      background: rgba(0, 15, 30, 0.9);
       color: var(--color-accent-blue);
       border: 2px solid var(--color-accent-blue);
-      border-radius: 12px; /* Softer rounded corners */
+      border-radius: 12px;
       box-shadow: var(--glow-strong);
       position: relative;
-      z-index: 1; /* Ensure this is above branding */
+      z-index: 1;
       font-size: 1.4rem;
       font-weight: bold;
-      animation: flagAcquired 0.8s forwards, neonPulse 1.5s infinite alternate; /* New entry anim + pulse */
+      animation: flagAcquired 0.8s forwards, neonPulse 1.5s infinite alternate;
       font-family: 'Orbitron', sans-serif;
       text-shadow: var(--glow-soft);
       letter-spacing: 1px;
@@ -285,8 +284,8 @@
     <div class="brand-text">Cyber Buddy</div>
   </div>
 
-  <h2>⚔️ XSS LEVEL 1 // INITIATE_PROTOCOL</h2>
-  <p>🎯 OBJECTIVE: INJECT MALICIOUS CODE TO INFILTRATE SYSTEM (`&lt;script&gt;alert(1)&lt;/script&gt;`)</p>
+  <h2>⚔️ XSS - LEVEL 1</h2>
+  <p>🎯 OBJECTIVE: INJECT A SIMPLE SCRIPT (E.G., `<script>alert('XSS');</script>`) INTO THE INPUT FIELD.</p>
 
   <form method="GET">
     <input name="payload" type="text" placeholder="ENTER XSS PAYLOAD..." required>
@@ -301,48 +300,41 @@
   </div>
 
   <script>
-    /*
-     * LOCAL STORAGE BEHAVIOR CLARIFICATION FOR XSS CHALLENGES:
-     *
-     * In this challenge, the flag is generated ONCE per unique browser instance
-     * and stored in localStorage. This means:
-     * - If the user clears browser data (cache, localStorage), the flag is lost.
-     * - If the user uses a different browser on the same device (e.g., Chrome vs. Firefox),
-     * each browser has its own localStorage, so a new flag will be generated for each.
-     * - If the user accesses the challenge from a different device (e.g., phone vs. laptop),
-     * it's a new browser environment, leading to a new flag.
-     *
-     * The flag is designed to persist for a single browser instance to prove completion
-     * without needing to re-exploit.
-     *
-     * IMPORTANT: The flag is only REVEALED upon a successful XSS payload execution
-     * (which triggers the overridden window.alert function).
-     * There is NO code to display the flag automatically on page load if it exists,
-     * as that would bypass the challenge.
-     */
-    function showFlag() {
-      const key = "xss-level1-flag";
-      let flag = localStorage.getItem(key);
-      if (!flag) {
-        // Generate a new flag only if one doesn't exist for this browser instance
-        flag = "flag-xss-level1-" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem(key, flag); // Store the newly generated flag
-      }
-      document.getElementById("flag-value").innerText = flag;
-      document.getElementById("flag").style.display = "block";
+    // Centralized flag generation and storage function
+    function generateAndStoreFlag(level) {
+        const flagKey = `flag-${level}`; // e.g., "flag-xss-level1"
+        const completionKey = `${level}-completed`; // e.g., "xss-level1-completed"
+        let flag = localStorage.getItem(flagKey);
+
+        if (!flag) {
+            flag = `FLAG_${level.toUpperCase()}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
+            localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
+        }
+        localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
+
+        return flag;
+    }
+
+    // Function to display the flag on the page
+    function showFlag(level) {
+        const flagValue = generateAndStoreFlag(level);
+        document.getElementById("flag-value").innerText = flagValue;
+        document.getElementById("flag").style.opacity = 1; // Make flag visible
+        document.getElementById("flag").style.transform = "scale(1) translateY(0)"; // Reset transform
+        document.getElementById("flag").style.display = "block"; // Ensure it's displayed
     }
 
     // Override the alert function to trigger flag display upon successful XSS
     const originalAlert = window.alert;
     window.alert = function(msg) {
-      showFlag(); // This is called *before* the actual alert popup
-      originalAlert(msg);
+        showFlag('xss-level1'); // Call showFlag for XSS Level 1
+        originalAlert(msg); // Still show the actual alert
     };
 
     const output = document.getElementById("output");
 
     // Function to simulate typing effect
-    function typeEffect(element, text, delay = 30) { // Slightly faster default delay
+    function typeEffect(element, text, delay = 30) {
       let i = 0;
       element.innerHTML = ''; // Clear existing content
       element.classList.add('typing-effect'); // Add typing class for cursor
@@ -353,11 +345,11 @@
           if (text.charAt(i) === '<') {
               let tagEnd = text.indexOf('>', i);
               if (tagEnd !== -1) {
-                  element.innerHTML += text.substring(i, tagEnd + 1);
-                  i = tagEnd + 1;
+                element.innerHTML += text.substring(i, tagEnd + 1);
+                i = tagEnd + 1;
               } else {
-                  element.innerHTML += text.charAt(i); // Fallback for malformed tags
-                  i++;
+                element.innerHTML += text.charAt(i); // Fallback for malformed tags
+                i++;
               }
           } else {
               element.innerHTML += text.charAt(i);
@@ -371,32 +363,25 @@
       typeChar();
     }
 
-    const payload = new URLSearchParams(window.location.search).get("payload");
+    const urlParams = new URLSearchParams(window.location.search);
+    const payload = urlParams.get("payload"); // Get the payload from the URL query parameter
 
     if (payload) {
-      // Create a temporary container to safely parse the payload's HTML
-      const tempContainer = document.createElement("div");
-      tempContainer.innerHTML = payload;
+      // --- VULNERABILITY: DIRECT REFLECTION OF USER INPUT ---
+      // For Level 1, we intentionally reflect the payload directly into the DOM
+      // without any sanitization or encoding.
+      // The browser will then parse and execute any valid HTML/JavaScript.
+      output.innerHTML = ">>> REFLECTED_OUTPUT:\n>_ " + payload;
 
-      // Extract script tags and execute them via eval as before
-      // This is the core of the XSS vulnerability demonstration
-      const scripts = tempContainer.querySelectorAll("script");
-      scripts.forEach(script => {
-        try {
-          eval(script.innerText);
-        } catch (err) {
-          console.error("Script execution error:", err);
-          // Optional: Display error message in output for user feedback
-          tempContainer.innerHTML += `<div style="color: red;">Error: ${err.message}</div>`;
-        }
-      });
+      // Because the output is directly written, if the payload contains an alert,
+      // it will automatically trigger. The overridden alert function will then
+      // call showFlag.
+      
+      // We still use typeEffect for the initial display to keep consistency.
+      // However, the real "vulnerability" here is in setting innerHTML,
+      // not in the typing effect itself.
+      typeEffect(output, ">>> REFLECTED_OUTPUT:\n>_ " + payload, 20);
 
-      // After extracting and executing scripts, get the remaining HTML for display
-      const displayContent = tempContainer.innerHTML;
-
-      // Add a simulated terminal prompt prefix before the typed output
-      const prefix = ">>> EXECUTION_LOG:\n>_ "; // More engaging prefix
-      typeEffect(output, prefix + displayContent, 20); // Slightly faster typing for better UX
     } else {
       // If no payload, show an initial prompt in the output box
       typeEffect(output, ">>> SYSTEM_READY\n>_ Awaiting_Payload_Input...", 30);
