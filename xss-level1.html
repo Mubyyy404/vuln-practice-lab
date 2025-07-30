@@ -301,12 +301,8 @@
   </div>
 
   <script>
-    // Helper function to HTML-encode text for safe display
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.appendChild(document.createTextNode(text));
-      return div.innerHTML;
-    }
+    // NOTE: The escapeHtml function has been removed to intentionally make the lab vulnerable.
+    // In a real-world scenario, you would ALWAYS use sanitization like escapeHtml.
 
     /*
      * LOCAL STORAGE BEHAVIOR CLARIFICATION FOR XSS CHALLENGES:
@@ -385,18 +381,16 @@
 
     if (payload) {
       const prefix = ">>> EXECUTING_PAYLOAD: ";
-      // For initial typing effect, display the raw payload as it was typed.
-      // Note: This part might still show unexecuted HTML tags if they are part of payload
-      // because typeEffect directly adds to innerHTML.
+      // Display the raw payload as it was typed for the initial effect.
+      // This will now directly inject any HTML in the payload.
       typeEffect(output, prefix + payload, 20); 
       
-      // For the "RESULT" section, HTML-encode the payload to display it safely as text.
-      // This prevents the browser from trying to re-interpret potentially malicious HTML
-      // and ensures the raw code is *shown* but not *executed* again here.
-      const escapedPayloadForDisplay = escapeHtml(payload);
-      output.innerHTML += '<br><br><strong>RESULT:</strong><br>' + escapedPayloadForDisplay;
+      // THIS IS THE INTENTIONAL VULNERABILITY FOR THE CHALLENGE:
+      // Directly inject the raw payload into the DOM as HTML.
+      // In a real application, this would be extremely dangerous.
+      output.innerHTML += '<br><br><strong>RESULT:</strong><br>' + payload;
 
-      // --- START SPECIFIC FIX FOR LEVEL 1 (BYPASS BROWSER XSS AUDITOR FOR LAB) ---
+      // --- XSS AUDITOR BYPASS FOR LAB COMPLETION ---
       // This part ensures the alert fires and the flag is given even if the
       // browser's built-in XSS protection tries to block the script injection.
       const normalizedPayload = payload.toLowerCase().replace(/\s/g, ''); 
@@ -415,7 +409,7 @@
               window.alert('XSS Payload Executed!');
           }, 100);
       }
-      // --- END SPECIFIC FIX ---
+      // --- END XSS AUDITOR BYPASS ---
 
     } else {
       // If no payload, show an initial prompt in the output box
