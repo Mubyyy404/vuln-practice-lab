@@ -285,6 +285,28 @@
       75% { transform: skewX(3deg); opacity: 0.9; }
       100% { transform: skewX(0deg); opacity: 1; }
     }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 50px;
+        padding: 10px 25px;
+        background: var(--color-dark-blue);
+        color: var(--color-text-light);
+        border: 1px solid var(--color-accent-blue);
+        border-radius: 5px;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--glow-soft);
+    }
+
+    .back-button:hover {
+        background: var(--color-accent-blue);
+        color: var(--color-deep-bg);
+        box-shadow: var(--glow-medium);
+        transform: translateY(-2px);
+    }
   </style>
 </head>
 
@@ -313,6 +335,8 @@
 
   <div id="errorMessage"></div>
   <div id="output"></div>
+
+  <a href="index.html" class="back-button">Back to Challenges</a>
 
   <script>
     // Centralized flag generation and storage function
@@ -379,31 +403,27 @@
     document.getElementById('loginForm').addEventListener('submit', function(event) {
       event.preventDefault();
 
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
 
       let loginSuccess = false;
       let outputMessage = "";
 
-      const normalizedUsername = username.trim().toLowerCase();
-
+      // List of accepted SQL injection payloads (case-insensitive and trimmed for robustness)
       const acceptedSqlInjectionPayloads = [
-          "' or 1=1--",
-          "' or 1=1 --",
-          ' or 1=1--
-          ' OR 1=1
-          "' or '1'='1",
-          "' or 1=1#",
-          "' or 1=1 /*",
-          "' or true--",
+          "' OR 1=1--",
+          "' OR '1'='1",
+          "' OR TRUE--",
           "admin'--",
-          "admin' or 1=1--",
-          "' or 'a'='a",
-          "\" or 1=1--",
-          "\" or \"1\"=\"1"
-      ];
+          "admin' OR 1=1--",
+          "\" OR 1=1--",
+          "\" OR \"1\"=\"1"
+      ].map(p => p.toLowerCase()); // Convert all to lowercase for comparison
 
-      const isSqlInjected = acceptedSqlInjectionPayloads.some(payload => normalizedUsername.includes(payload.toLowerCase()));
+      const checkUsername = username.toLowerCase();
+
+      // Check for SQLi payloads
+      const isSqlInjected = acceptedSqlInjectionPayloads.some(payload => checkUsername.includes(payload) || password.toLowerCase().includes(payload));
 
       if (isSqlInjected) {
           loginSuccess = true;
