@@ -307,27 +307,19 @@
     🎉 <strong>ACCESS GRANTED // FLAG ACQUIRED:</strong> <span id="flag-value"></span>
   </div>
 
+  <script src="common_functions.js"></script> <!-- Link to the new common functions file -->
   <script>
-    // Centralized flag generation and storage function
-    function generateAndStoreFlag(level) {
-        const flagKey = `flag-${level}`; // e.g., "flag-xss-level1"
-        const completionKey = `${level}-completed`; // e.g., "xss-level1-completed"
-        let flag = localStorage.getItem(flagKey);
-
-        if (!flag) {
-            flag = `FLAG_${level.toUpperCase()}_` + Math.random().toString(36).substring(2, 10).toUpperCase();
-            localStorage.setItem(flagKey, flag); // Store the flag for specific level reference
-        }
-        localStorage.setItem(completionKey, flag); // Store the flag value for completion tracking
-
-        return flag;
-    }
-
     // Function to display the flag on the page
     function showFlag(level) {
-        const flagValue = generateAndStoreFlag(level);
+        // Use the common deterministic flag generation
+        const flagValue = generateDeterministicFlag(currentUserId, level);
         document.getElementById("flag-value").innerText = flagValue;
-        document.getElementById("flag").style.display = "block";
+        document.getElementById("flag").style.opacity = 1; // Make flag visible
+        document.getElementById("flag").style.transform = "scale(1) translateY(0)"; // Reset transform
+        document.getElementById("flag").style.display = "block"; // Ensure it's displayed
+        
+        // Mark completion in localStorage (only a boolean/string, not the flag itself)
+        localStorage.setItem(`${level}-completed`, 'true');
     }
 
     // Override the alert function to trigger flag display upon successful XSS
@@ -338,6 +330,8 @@
     };
 
     const output = document.getElementById("output");
+    const urlParams = new URLSearchParams(window.location.search);
+    const payload = urlParams.get('payload');
 
     // Function to simulate typing effect
     function typeEffect(element, text, delay = 30) {
@@ -369,12 +363,11 @@
       typeChar();
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const payload = urlParams.get('payload');
-
     if (payload) {
-      // Direct reflection of payload into innerHTML - vulnerable to XSS
-      // This is the vulnerability for Level 1
+      // --- VULNERABILITY: DIRECT REFLECTION OF USER INPUT ---
+      // For Level 1, we intentionally reflect the payload directly into the DOM
+      // without any sanitization or encoding.
+      // The browser will then parse and execute any valid HTML/JavaScript.
       const decodedPayload = decodeURIComponent(payload); // Decode URL-encoded payload
 
       // Add a simulated terminal prompt prefix before the typed output
@@ -390,7 +383,9 @@
       let match;
       while ((match = scriptRegex.exec(decodedPayload)) !== null) {
           try {
-              eval(match[0].replace(/<\/?script[^>]*>/g, '')); // Execute the script content
+              // Execute the script content. This will trigger the overridden window.alert
+              // if the payload contains an alert call.
+              eval(match[0].replace(/<\/?script[^>]*>/g, '')); 
           } catch (e) {
               console.error("Error executing payload script:", e);
           }
