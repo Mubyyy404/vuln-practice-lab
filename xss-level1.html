@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 
 <html lang="en">
 
@@ -756,181 +756,31 @@
 
     if (payload) {
 
-      // --- START LEVEL 2 SANITIZATION / VULNERABILITY LOGIC ---
+      // --- MODIFIED LEVEL 2 SANITIZATION / VULNERABILITY LOGIC ---
 
-      // Instead of directly using innerHTML, we'll sanitize for <script> tags
+      // Instead of sanitizing, we will now directly output the payload.
 
-      // but allow <img> tags and process their attributes.
+      // This makes it vulnerable to simple <script> tags.
 
+      
 
+      let finalDisplayContent = payload; // Directly use the payload
 
-      let sanitizedPayload = payload;
+      
 
-      let scriptExecutionError = false;
+      // Set the innerHTML of the output element directly with the payload.
 
+      // This is the vulnerability that allows simple <script> tags to execute.
 
+      output.innerHTML = finalDisplayContent;
 
-      // 1. Basic <script> tag removal
 
-      // This is a simple (and easily bypassed) example of server-side sanitization.
-
-      // In a real scenario, this would be much more robust.
-
-      sanitizedPayload = sanitizedPayload.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-
-
-      // 2. Create a temporary container to parse the payload safely
-
-      const tempDiv = document.createElement('div');
-
-      tempDiv.innerHTML = sanitizedPayload;
-
-
-
-      let processedOutputHTML = '';
-
-
-
-      // 3. Process <img> tags for attribute-based XSS
-
-      const imgTags = tempDiv.querySelectorAll('img');
-
-      imgTags.forEach(img => {
-
-          let originalImgHTML = img.outerHTML; // Keep original for display
-
-          let src = img.getAttribute('src');
-
-          let onerror = img.getAttribute('onerror');
-
-
-
-          // Emulate browser execution of javascript: URI in src
-
-          if (src && src.toLowerCase().startsWith('javascript:')) {
-
-              try {
-
-                  // In a real app, this would be a major vulnerability.
-
-                  // Here, we explicitly eval to simulate the XSS execution.
-
-                  eval(src.substring('javascript:'.length));
-
-                  processedOutputHTML += `Executed JavaScript from src: ${originalImgHTML}<br>`;
-
-              } catch (e) {
-
-                  console.error("Error executing javascript: URI in src:", e);
-
-                  processedOutputHTML += `<span style="color: red;">Error executing src:</span> ${originalImgHTML} (${e.message})<br>`;
-
-              }
-
-          }
-
-
-
-          // Emulate browser execution of onerror attribute
-
-          if (onerror) {
-
-              // Create a dummy image element to trigger onerror naturally if src is invalid
-
-              const dummyImg = document.createElement('img');
-
-              dummyImg.onerror = function() {
-
-                  try {
-
-                      // In a real app, this would be a major vulnerability.
-
-                      // Here, we explicitly eval to simulate the XSS execution.
-
-                      eval(onerror);
-
-                      processedOutputHTML += `Executed onerror attribute: ${originalImgHTML}<br>`;
-
-                  } catch (e) {
-
-                      console.error("Error executing onerror:", e);
-
-                      processedOutputHTML += `<span style="color: red;">Error executing onerror:</span> ${originalImgHTML} (${e.message})<br>`;
-
-                  }
-
-                  // Clean up the dummy image to prevent multiple triggers
-
-                  if (dummyImg.parentNode) dummyImg.parentNode.removeChild(dummyImg);
-
-              };
-
-              // Set an invalid src to ensure onerror is triggered
-
-              dummyImg.src = 'invalid-image-source-to-trigger-onerror.jpg';
-
-              // Append to body briefly to trigger the event, then remove
-
-              document.body.appendChild(dummyImg);
-
-          }
-
-
-
-          // Append the original image tag (even if it didn't trigger JS, for display)
-
-          processedOutputHTML += originalImgHTML;
-
-      });
-
-
-
-      // Append any other safe HTML (non-script, non-img elements) or remaining text
-
-      // We are *not* re-injecting the raw payload's innerHTML directly here,
-
-      // but rather building up the output based on what we processed.
-
-      // For simplicity, we'll just show the original payload for non-img/script parts
-
-      // after attempting to remove scripts.
-
-      let finalDisplayContent = sanitizedPayload; // Start with payload after script removal
-
-
-
-      // If any img tags were processed, we might want to override/append
-
-      // or show the 'processedOutputHTML' instead. For this level,
-
-      // let's show what was successfully processed, or a message if nothing happened.
-
-      if (processedOutputHTML) {
-
-          finalDisplayContent = processedOutputHTML;
-
-      } else if (payload.includes('<script')) {
-
-          finalDisplayContent = `<span style="color: yellow;">Filter engaged: &lt;script&gt; tags are not allowed!</span><br>` + sanitizedPayload;
-
-      } else {
-
-         finalDisplayContent = " " + sanitizedPayload;
-
-      }
-
-
-
-      // --- END LEVEL 2 SANITIZATION / VULNERABILITY LOGIC ---
-
-
-
-      // Add a simulated terminal prompt prefix before the typed output
-
-      const prefix = " "; // More engaging prefix
-
-      typeEffect(output, prefix + finalDisplayContent, 20); // Slightly faster typing for better UX
+      // Add a simulated terminal prompt prefix before the typed output.
+      // We are no longer using typeEffect for the actual payload execution,
+      // as setting innerHTML directly is what causes the XSS.
+      // We'll just display a message indicating the payload was "processed".
+      const prefix = ">>> PROCESSING_PAYLOAD...\n>_ ";
+      typeEffect(output, prefix + "Payload attempted: " + payload, 20); // Show what was attempted
 
     } else {
 
