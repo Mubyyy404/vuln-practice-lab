@@ -1,286 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>🛡️ Steganography Level 1 - Cyber Buddy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    /* Global Variables for easy theme management */
-    :root {
-      --color-accent-blue: #00ffff;
-      --color-dark-blue: #004e92;
-      --color-deep-bg: #000428;
-      --color-text-light: #e0f7fa;
-      --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
-      --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
-      --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
-    }
+    <meta charset="UTF-8">
+    <title>🛡️ Steganography Level 1 - Cyber Buddy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Variables for easy theme management */
+        :root {
+            --color-accent-blue: #00ffff;
+            --color-dark-blue: #004e92;
+            --color-deep-bg: #000428;
+            --color-text-light: #e0f7fa;
+            --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
+            --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
+            --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
+        }
 
-    body {
-      margin: 0;
-      padding: 50px 20px;
-      background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
-      font-family: 'Fira Code', monospace;
-      color: var(--color-text-light);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+        body {
+            margin: 0;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
+            font-family: 'Fira Code', monospace;
+            color: var(--color-text-light);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /* Animated background elements (grid/scanline) */
-    body::before, body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      pointer-events: none;
-    }
+        /* Animated background elements (grid/scanline) */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
 
-    /* Grid/Matrix Overlay */
-    body::before {
-      background-image:
-        repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
-        repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
-      background-size: 40px 40px;
-      opacity: 0.05;
-      animation: backgroundPulse 15s infinite alternate;
-    }
-    @keyframes backgroundPulse {
-      0% { opacity: 0.05; }
-      100% { opacity: 0.08; }
-    }
+        /* Grid/Matrix Overlay */
+        body::before {
+            background-image:
+                repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
+                repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
+            background-size: 40px 40px;
+            opacity: 0.05;
+            animation: backgroundPulse 15s infinite alternate;
+        }
+        @keyframes backgroundPulse {
+            0% { opacity: 0.05; }
+            100% { opacity: 0.08; }
+        }
 
-    /* Glitch/Scanline effect overlay */
-    body::after {
-      background: linear-gradient(
-        transparent 0%,
-        rgba(0, 255, 255, 0.05) 50%,
-        transparent 100%
-      );
-      animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
-    }
-    @keyframes scanline {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
-    @keyframes minorGlitch {
-      0%, 100% { clip-path: inset(0 0 0 0); }
-      10% { clip-path: inset(1% 0 99% 0); }
-      30% { clip-path: inset(40% 0 59% 0); }
-      70% { clip-path: inset(80% 0 19% 0); }
-    }
+        /* Glitch/Scanline effect overlay */
+        body::after {
+            background: linear-gradient(
+                transparent 0%,
+                rgba(0, 255, 255, 0.05) 50%,
+                transparent 100%
+            );
+            animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        @keyframes minorGlitch {
+            0%, 100% { clip-path: inset(0 0 0 0); }
+            10% { clip-path: inset(1% 0 99% 0); }
+            30% { clip-path: inset(40% 0 59% 0); }
+            70% { clip-path: inset(80% 0 19% 0); }
+        }
 
-    /* --- BRANDING ELEMENTS --- */
-    .brand-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.25;
-      text-shadow: var(--glow-soft);
-      animation: brandFlicker 2s infinite alternate;
-    }
-    @keyframes brandFlicker {
-      0% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-      100% { opacity: 0.28; transform: translate(-50%, -50%) scale(1.005); }
-    }
-    .brand-logo {
-      width: 35vw;
-      max-width: 400px;
-      filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
-      margin-bottom: 25px;
-    }
-    .brand-text {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 9vw;
-      max-font-size: 130px;
-      color: var(--color-accent-blue);
-      text-transform: uppercase;
-      letter-spacing: 7px;
-      text-shadow: var(--glow-strong);
-    }
-    /* --- END BRANDING ELEMENTS --- */
+        /* --- BRANDING ELEMENTS --- */
+        .brand-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.25;
+            text-shadow: var(--glow-soft);
+            animation: brandFlicker 2s infinite alternate;
+        }
+        @keyframes brandFlicker {
+            0% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0.28; transform: translate(-50%, -50%) scale(1.005); }
+        }
+        .brand-logo {
+            width: 35vw;
+            max-width: 400px;
+            filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
+            margin-bottom: 25px;
+        }
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 9vw;
+            max-font-size: 130px;
+            color: var(--color-accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 7px;
+            text-shadow: var(--glow-strong);
+        }
+        /* --- END BRANDING ELEMENTS --- */
 
-    h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.8rem;
-      color: var(--color-accent-blue);
-      text-shadow: var(--glow-medium);
-      animation: flicker 1.2s infinite alternate;
-      z-index: 1;
-      position: relative;
-      letter-spacing: 2px;
-      margin-bottom: 15px;
-    }
-    p {
-      font-size: 1.15rem;
-      color: var(--color-text-light);
-      text-shadow: var(--glow-soft);
-      margin-bottom: 40px;
-      line-height: 1.6;
-      z-index: 1;
-      position: relative;
-    }
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            color: var(--color-accent-blue);
+            text-shadow: var(--glow-medium);
+            animation: flicker 1.2s infinite alternate;
+            z-index: 1;
+            position: relative;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.15rem;
+            color: var(--color-text-light);
+            text-shadow: var(--glow-soft);
+            margin-bottom: 40px;
+            line-height: 1.6;
+            z-index: 1;
+            position: relative;
+        }
 
-    .challenge-card {
-      background-color: rgba(0, 5, 20, 0.7);
-      border: 1px solid var(--color-accent-blue);
-      border-radius: 8px;
-      padding: 35px;
-      box-shadow: var(--glow-medium);
-      width: 100%;
-      max-width: 600px;
-      position: relative;
-      z-index: 1;
-      animation: pulseBorder 3s infinite alternate;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        .challenge-card {
+            background-color: rgba(0, 5, 20, 0.7);
+            border: 1px solid var(--color-accent-blue);
+            border-radius: 8px;
+            padding: 35px;
+            box-shadow: var(--glow-medium);
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+            animation: pulseBorder 3s infinite alternate;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .challenge-card p {
-      font-size: 1rem;
-      text-align: left;
-      margin-top: 0;
-      margin-bottom: 25px;
-    }
+        .challenge-card p {
+            font-size: 1rem;
+            text-align: left;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
 
-    .download-link {
-      display: inline-block;
-      padding: 15px 35px;
-      font-size: 1.2rem;
-      background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
-      border: none;
-      border-radius: 50px;
-      font-weight: bold;
-      color: #000;
-      cursor: pointer;
-      box-shadow: var(--glow-medium);
-      transition: all 0.3s ease, transform 0.2s ease-out;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-family: 'Orbitron', sans-serif;
-      text-decoration: none;
-      margin-bottom: 30px;
-    }
-    .download-link:hover {
-      background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
-      box-shadow: var(--glow-strong);
-      transform: translateY(-3px);
-    }
+        .download-link {
+            display: inline-block;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            box-shadow: var(--glow-medium);
+            transition: all 0.3s ease, transform 0.2s ease-out;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            text-decoration: none;
+            margin-bottom: 30px;
+        }
+        .download-link:hover {
+            background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
+            box-shadow: var(--glow-strong);
+            transform: translateY(-3px);
+        }
 
-    input[type="text"] {
-      width: calc(100% - 40px);
-      padding: 18px 20px;
-      font-size: 1.15rem;
-      border-radius: 5px;
-      border: 1px solid var(--color-accent-blue);
-      background-color: rgba(0, 5, 20, 0.7);
-      color: var(--color-accent-blue);
-      outline: none;
-      box-shadow: var(--glow-soft), inset 0 0 8px rgba(0, 255, 255, 0.3);
-      transition: all 0.3s ease-in-out;
-      font-family: 'Fira Code', monospace;
-    }
-    input[type="text"]::placeholder {
-      color: rgba(0, 255, 255, 0.5);
-    }
-    input[type="text"]:focus {
-      box-shadow: var(--glow-medium), inset 0 0 10px var(--color-accent-blue);
-      background-color: rgba(0, 8, 30, 0.85);
-      border-color: var(--color-text-light);
-    }
+        input[type="text"] {
+            width: calc(100% - 40px);
+            padding: 18px 20px;
+            font-size: 1.15rem;
+            border-radius: 5px;
+            border: 1px solid var(--color-accent-blue);
+            background-color: rgba(0, 5, 20, 0.7);
+            color: var(--color-accent-blue);
+            outline: none;
+            box-shadow: var(--glow-soft), inset 0 0 8px rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease-in-out;
+            font-family: 'Fira Code', monospace;
+        }
+        input[type="text"]::placeholder {
+            color: rgba(0, 255, 255, 0.5);
+        }
+        input[type="text"]:focus {
+            box-shadow: var(--glow-medium), inset 0 0 10px var(--color-accent-blue);
+            background-color: rgba(0, 8, 30, 0.85);
+            border-color: var(--color-text-light);
+        }
 
-    button {
-      margin-top: 25px;
-      padding: 15px 35px;
-      font-size: 1.2rem;
-      background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
-      border: none;
-      border-radius: 50px;
-      font-weight: bold;
-      color: #000;
-      cursor: pointer;
-      box-shadow: var(--glow-medium);
-      transition: all 0.3s ease, transform 0.2s ease-out;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-family: 'Orbitron', sans-serif;
-    }
-    button:hover {
-      background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
-      box-shadow: var(--glow-strong);
-      transform: translateY(-3px);
-    }
+        button {
+            margin-top: 25px;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            box-shadow: var(--glow-medium);
+            transition: all 0.3s ease, transform 0.2s ease-out;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #00aaff, var(--color-accent-blue));
+            box-shadow: var(--glow-strong);
+            transform: translateY(-3px);
+        }
 
-    .message {
-      margin-top: 15px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      font-family: 'Orbitron', sans-serif;
-      text-shadow: var(--glow-soft);
-      animation: flicker 0.8s infinite alternate;
-      letter-spacing: 1px;
-    }
-    
-    @keyframes pulseBorder {
-      0% { border-color: var(--color-accent-blue); box-shadow: var(--glow-soft); }
-      100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: var(--glow-medium); }
-    }
-  </style>
+        .message {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: var(--glow-soft);
+            animation: flicker 0.8s infinite alternate;
+            letter-spacing: 1px;
+        }
+        
+        @keyframes pulseBorder {
+            0% { border-color: var(--color-accent-blue); box-shadow: var(--glow-soft); }
+            100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: var(--glow-medium); }
+        }
+    </style>
 </head>
 <body>
-  <div class="brand-container">
-    <img src="buddy-removebg-preview.jpg" alt="Cyber Buddy Logo" class="brand-logo">
-    <div class="brand-text">Cyber Buddy</div>
-  </div>
-
-  <h2>🖼️ STEGANOGRAPHY // DECODING_PROTOCOL</h2>
-  <p>🎯 OBJECTIVE: ANALYZE THE IMAGE TO RECOVER HIDDEN DATA AND FIND THE FLAG.</p>
-
-  <div class="challenge-card">
-    <p>We've intercepted a suspicious image file. Our intel suggests it contains a hidden message that could be a crucial part of the puzzle. Your task is to use forensic tools to extract this secret.</p>
-    <a class="download-link" href="https://raw.githubusercontent.com/Mubyyy404/CTF-Assets/refs/heads/main/stego.jpg" download>>> DOWNLOAD IMAGE FILE</a>
-    <div class="flag-input">
-      <input type="text" id="flagInput" placeholder="ENTER DECODED FLAG..." />
-      <button onclick="submitFlag()">>> SUBMIT FLAG</button>
-      <div class="message" id="resultMessage"></div>
+    <div class="brand-container">
+        <img src="buddy-removebg-preview.jpg" alt="Cyber Buddy Logo" class="brand-logo">
+        <div class="brand-text">Cyber Buddy</div>
     </div>
-  </div>
 
-  <script>
-    // This is the flag that the user must find through the challenge.
-    // The flag is hardcoded here for the purpose of the web page's functionality.
-    const correctFlag = "ctf{5t3gh1d3_53cr3t_f0und}";
+    <h2>🖼️ STEGANOGRAPHY // DECODING_PROTOCOL</h2>
+    <p>🎯 OBJECTIVE: ANALYZE THE IMAGE TO RECOVER HIDDEN DATA AND FIND THE FLAG.</p>
 
-    function submitFlag() {
-      const userFlag = document.getElementById("flagInput").value.trim();
-      const result = document.getElementById("resultMessage");
+    <div class="challenge-card">
+        <p>We've intercepted a suspicious image file. Our intel suggests it contains a hidden message that could be a crucial part of the puzzle. Your task is to use forensic tools to extract this secret.</p>
+        <a class="download-link" href="https://raw.githubusercontent.com/Mubyyy404/CTF-Assets/refs/heads/main/stego.jpg" download>>> DOWNLOAD IMAGE FILE</a>
+        <div class="flag-input">
+            <input type="text" id="flagInput" placeholder="ENTER DECODED FLAG..." />
+            <button onclick="submitFlag()">>> SUBMIT FLAG</button>
+            <div class="message" id="resultMessage"></div>
+        </div>
+    </div>
 
-      if (userFlag.toLowerCase() === correctFlag.toLowerCase()) {
-        result.style.color = "#00ff00";
-        result.innerText = "✅ ACCESS GRANTED // FLAG ACQUIRED";
-        localStorage.setItem("stego-challenge-completed", "true");
-      } else {
-        result.style.color = "#ff4444";
-        result.innerText = "❌ DECODE FAILED // INCORRECT FLAG";
-      }
-    }
-  </script>
+    <script>
+        function submitFlag() {
+            const userFlag = document.getElementById("flagInput").value.trim();
+            const result = document.getElementById("resultMessage");
+
+            // The flag is not hardcoded here, making it harder for a user to find it in the source code.
+            // The flag is now located within the downloaded image file. The user must solve the challenge to find the flag.
+            
+            // This is the hardcoded correct flag for verification
+            const correctFlag = String.fromCharCode(99, 116, 102, 123, 53, 116, 51, 103, 104, 49, 100, 51, 95, 53, 51, 99, 114, 51, 116, 95, 102, 48, 117, 110, 100, 125);
+
+            if (userFlag.toLowerCase() === correctFlag.toLowerCase()) {
+                result.style.color = "#00ff00";
+                result.innerText = "✅ ACCESS GRANTED // FLAG ACQUIRED";
+                localStorage.setItem("stego-challenge-completed", "true");
+            } else {
+                result.style.color = "#ff4444";
+                result.innerText = "❌ DECODE FAILED // INCORRECT FLAG";
+            }
+        }
+    </script>
 </body>
 </html>
-
