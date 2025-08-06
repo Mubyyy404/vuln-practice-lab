@@ -1,264 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Buddy - Challenges</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Re-using styles from your other files for consistency */
-        :root {
-            --color-accent-blue: #00ffff;
-            --color-dark-blue: #004e92;
-            --color-deep-bg: #000428;
-            --color-text-light: #e0f7fa;
-            --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
-            --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
-            --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛡️ CyberSec Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    /* Global Variables */
+    :root {
+      --color-accent-blue: #00ffff;
+      --color-dark-blue: #004e92;
+      --color-deep-bg: #000428;
+      --color-text-light: #e0f7fa;
+      --glow-soft: 0 0 10px rgba(0, 255, 255, 0.5);
+      --glow-medium: 0 0 15px var(--color-accent-blue), 0 0 25px rgba(0, 255, 255, 0.3);
+      --glow-strong: 0 0 20px var(--color-accent-blue), 0 0 40px rgba(0, 255, 255, 0.5);
+    }
+    body {
+      margin: 0;
+      font-family: 'Share Tech Mono', monospace;
+      background: radial-gradient(circle at top, #000428, #004e92);
+      color: var(--color-accent-blue);
+      text-align: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
 
-        body {
-            margin: 0;
-            padding: 50px 20px;
-            background: linear-gradient(135deg, var(--color-deep-bg) 0%, var(--color-dark-blue) 100%);
-            font-family: 'Fira Code', monospace;
-            color: var(--color-text-light);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+    /* Animated background elements */
+    body::before, body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        pointer-events: none;
+    }
+    body::before {
+        background-image:
+            repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
+            repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
+        background-size: 40px 40px;
+        opacity: 0.05;
+        animation: backgroundPulse 15s infinite alternate;
+    }
+    @keyframes backgroundPulse {
+        0% { opacity: 0.05; }
+        100% { opacity: 0.08; }
+    }
+    body::after {
+        background: linear-gradient(
+            transparent 0%,
+            rgba(0, 255, 255, 0.05) 50%,
+            transparent 100%
+        );
+        animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
+    }
+    @keyframes scanline {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(100%); }
+    }
+    @keyframes minorGlitch {
+        0%, 100% { clip-path: inset(0 0 0 0); }
+        10% { clip-path: inset(1% 0 99% 0); }
+        30% { clip-path: inset(40% 0 59% 0); }
+        70% { clip-path: inset(80% 0 19% 0); }
+    }
 
-        body::before, body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        body::before {
-            background-image:
-                repeating-linear-gradient(0deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px),
-                repeating-linear-gradient(90deg, var(--color-accent-blue) 0px, transparent 1px, transparent 40px);
-            background-size: 40px 40px;
-            opacity: 0.05;
-            animation: backgroundPulse 15s infinite alternate;
-        }
-
-        @keyframes backgroundPulse {
-            0% { opacity: 0.05; }
-            100% { opacity: 0.08; }
-        }
-
-        body::after {
-            background: linear-gradient(
-                transparent 0%,
-                rgba(0, 255, 255, 0.05) 50%,
-                transparent 100%
-            );
-            animation: scanline 8s infinite linear, minorGlitch 1s infinite alternate;
-        }
-
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
-        @keyframes minorGlitch {
-            0%, 100% { clip-path: inset(0 0 0 0); }
-            10% { clip-path: inset(1% 0 99% 0); }
-            30% { clip-path: inset(40% 0 59% 0); }
-            70% { clip-path: inset(80% 0 19% 0); }
-        }
-
-        .brand-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.25;
-            text-shadow: var(--glow-soft);
-            animation: brandFlicker 2s infinite alternate;
-        }
-
-        @keyframes brandFlicker {
-            0% { opacity: 0.25; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0.28; transform: translate(-50%, -50%) scale(1.005); }
-        }
-
-        .brand-logo {
-            width: 35vw;
-            max-width: 400px;
-            filter: drop-shadow(0 0 25px var(--color-accent-blue)) saturate(1.8);
-            margin-bottom: 25px;
-        }
-
-        .brand-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 9vw;
-            max-font-size: 130px;
-            color: var(--color-accent-blue);
-            text-transform: uppercase;
-            letter-spacing: 7px;
-            text-shadow: var(--glow-strong);
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            color: var(--color-accent-blue);
-            text-shadow: var(--glow-strong);
-            margin-bottom: 40px;
-            animation: flicker 1.2s infinite alternate;
-            z-index: 1;
-            position: relative;
-        }
-
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: var(--glow-medium);
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-            }
-        }
-
-        .challenges-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            width: 100%;
-            max-width: 1000px;
-            z-index: 1;
-            position: relative;
-        }
-
-        .challenge-card {
-            background-color: rgba(0, 5, 20, 0.8);
-            border: 1px solid var(--color-accent-blue);
-            border-radius: 10px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: var(--color-text-light);
-            transition: all 0.3s ease;
-            box-shadow: var(--glow-soft);
-        }
-
-        .challenge-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--glow-medium);
-            border-color: var(--color-text-light);
-            background-color: rgba(0, 8, 30, 0.9);
-        }
-
-        .challenge-card h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: var(--color-accent-blue);
-            margin-bottom: 10px;
-            text-shadow: var(--glow-soft);
-        }
-
-        .challenge-card p {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            text-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
-        }
-
-        .challenge-card .level-button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            background: linear-gradient(90deg, var(--color-accent-blue), #00aaff);
-            border: none;
-            border-radius: 25px;
-            font-weight: bold;
-            color: var(--color-deep-bg);
-            cursor: pointer;
-            box-shadow: var(--glow-soft);
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-        }
-
-        .challenge-card .level-button:hover {
-            box-shadow: var(--glow-medium);
-            transform: scale(1.05);
-        }
-
-        .certificate-link {
-            margin-top: 50px;
-            padding: 18px 40px;
-            font-size: 1.3rem;
-            background: linear-gradient(90deg, #32CD32, #00FF00); /* Green for certificate */
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            color: var(--color-deep-bg);
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(50, 205, 50, 0.6);
-            transition: all 0.3s ease, transform 0.2s ease-out;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Orbitron', sans-serif;
-            text-decoration: none;
-            display: inline-block;
-            z-index: 1;
-            position: relative;
-        }
-
-        .certificate-link:hover {
-            background: linear-gradient(90deg, #00FF00, #32CD32);
-            box-shadow: 0 0 25px rgba(50, 205, 50, 0.8);
-            transform: translateY(-5px);
-        }
-    </style>
+    /* --- Page Content Styles --- */
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      color: var(--color-accent-blue);
+      text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff;
+      margin-bottom: 30px;
+      /* Removed flicker animation for a cleaner look */
+    }
+    
+    .lab-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+      padding: 0 20px;
+    }
+    
+    .lab-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid var(--color-accent-blue);
+      border-radius: 15px;
+      padding: 25px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      text-decoration: none;
+      color: var(--color-text-light);
+    }
+    .lab-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    }
+    
+    .lab-card img {
+      max-width: 100%;
+      height: 130px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 5px #00f2ff);
+    }
+    
+    .lab-card h3 {
+      font-family: 'Orbitron', monospace;
+      color: var(--color-accent-blue);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+    
+    .lab-card .start-button {
+      display: inline-block;
+      text-decoration: none;
+      padding: 10px 25px;
+      border-radius: 30px;
+      font-weight: bold;
+      color: #000;
+      background: var(--color-accent-blue);
+      transition: background 0.3s ease;
+    }
+    .lab-card .start-button:hover {
+      background: #ffffff;
+      color: #000;
+    }
+    
+    .footer {
+      margin-top: 60px;
+      font-size: 0.9rem;
+      color: #77dff5;
+    }
+  </style>
 </head>
 <body>
-    <div class="brand-container">
-        <img src="buddy-removebg-preview.jpg" alt="Cyber Buddy Logo" class="brand-logo">
-        <div class="brand-text">Cyber Buddy</div>
-    </div>
-
-    <h1>Cyber Challenges</h1>
-
-    <div class="challenges-grid">
-        <a href="xss-level1.html" class="challenge-card">
-            <h3>Cross-Site Scripting (XSS)</h3>
-            <p>Level 1: Reflective XSS - Inject basic script.</p>
-            <div class="level-button">Start Level 1</div>
-        </a>
-
-        <a href="xss-level2.html" class="challenge-card">
-            <h3>Cross-Site Scripting (XSS)</h3>
-            <p>Level 2: Image Attribute Bypass - Bypass script filters.</p>
-            <div class="level-button">Start Level 2</div>
-        </a>
-
-        <a href="sqli-level1.html" class="challenge-card">
-            <h3>SQL Injection (SQLi)</h3>
-            <p>Level 1: Blind Authentication Bypass.</p>
-            <div class="level-button">Start Level 1</div>
-        </a>
-    </div>
-
-    <a href="certificate.html" class="certificate-link">View My Certificate</a>
+  <h1>🧠 CyberSec Vulnerability Lab</h1>
+  <p>Practice real-world web vulnerabilities and earn your certificate.</p>
+  
+  <div class="lab-container">
+    <a href="xss-level1.html" class="lab-card">
+      <img src="https://img.icons8.com/fluency/96/hacker.png" alt="XSS Level 1">
+      <h3>XSS Level 1</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="xss-level2.html" class="lab-card">
+      <img src="https://img.icons8.com/ios/96/firewall.png" alt="XSS Level 2">
+      <h3>XSS Level 2</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="sqli-level1.html" class="lab-card">
+      <img src="https://img.icons8.com/color/96/database.png" alt="SQLi Level 1">
+      <h3>SQL Injection Level 1</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="sqli-level2.html" class="lab-card">
+      <img src="https://img.icons8.com/color/96/database.png" alt="SQLi Level 2">
+      <h3>SQL Injection Level 2</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="idor.html" class="lab-card">
+      <img src="https://static.thenounproject.com/png/key-user-icon-3893152-512.png" alt="IDOR">
+      <h3>IDOR</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="param-tamper.html" class="lab-card">
+      <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/download.png" alt="Parameter Tampering">
+      <h3>Parameter Tampering</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="stego-level1.html" class="lab-card">
+      <img src="https://raw.githubusercontent.com/Mubyyy404/photo-2/refs/heads/main/stego.png" alt="Steganography">
+      <h3>Steganography</h3>
+      <div class="start-button">Start Challenge</div>
+    </a>
+    
+    <a href="certificate.html" class="lab-card">
+      <img src="https://img.icons8.com/3d-fluency/94/certificate.png" alt="Certificate">
+      <h3>Get Certificate</h3>
+      <div class="start-button">Download</div>
+    </a>
+  </div>
+  
+  <div class="footer">
+    Created by <strong>mubyyy404</strong> 💻 | Practice. Learn. Hack. Secure.
+  </div>
 </body>
 </html>
