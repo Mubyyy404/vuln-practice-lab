@@ -1,108 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificate Generator - Cyber Buddy Academy</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-    .form-box {
-      margin: 20px auto;
-      padding: 20px;
-      background: #1e1e1e;
-      border-radius: 10px;
-      width: 400px;
-    }
-    input, select, button {
-      width: 90%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background: #00ffcc;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #00cc99;
-    }
-    canvas {
-      margin-top: 20px;
-      border: 2px solid #00ffcc;
-      border-radius: 12px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Generate Certificate — Cyber Buddy Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#00ffcc;--bg:#0b1220;--card:#0f1720}
+  body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#061021,#081325);color:#e6f0ff;margin:0;padding:28px;display:flex;flex-direction:column;align-items:center;gap:18px}
+  .wrap{width:100%;max-width:1100px}
+  h1{margin:0 0 8px;font-weight:700}
+  .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  input[type="text"], select{padding:10px 12px;border-radius:8px;border:none;min-width:260px}
+  button{background:var(--accent);border:none;padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:700}
+  .row{display:flex;gap:12px;align-items:center}
+  #certCanvas{width:100%;max-width:1000px;height:auto;border-radius:8px;background:#fff;display:block}
+  .info{margin-top:12px;background:rgba(255,255,255,0.03);padding:12px;border-radius:8px}
+  .mono{font-family:ui-monospace,Consolas,monospace;background:#081324;padding:8px;border-radius:6px;display:inline-block}
+  .copyBtn{margin-left:8px;padding:6px 10px;border-radius:6px;border:none;background:#1e293b;color:#fff;cursor:pointer}
+  .small{font-size:13px;color:#bcd}
+  .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+</style>
 </head>
 <body>
-  <h1>Cyber Buddy Academy - Certificate Generator</h1>
+  <div class="wrap">
+    <h1>🎓 Cyber Buddy Academy — Certificate Generator</h1>
+    <p class="small">Place <code>certificate-template.png</code> (your Canva export) in the same folder. Tweak the positioning constants in the script if text doesn't align exactly.</p>
 
-  <div class="form-box">
-    <input type="text" id="name" placeholder="Enter your full name">
-    <select id="course">
-      <option value="">Select Course</option>
-      <option>Ethical Hacking</option>
-      <option>Web Application Penetration Testing</option>
-      <option>Network Security</option>
-    </select>
-    <button onclick="generateCertificate()">Generate Certificate</button>
+    <div class="controls">
+      <input id="name" type="text" placeholder="Full name (e.g. Priya Sharma)" />
+      <select id="course">
+        <option>Web Application Penetration Testing</option>
+        <option>Ethical Hacking Basics</option>
+        <option>Network Security Essentials</option>
+      </select>
+      <button id="genBtn">Generate</button>
+      <button id="downloadBtn" style="display:none">Download PNG</button>
+    </div>
+
+    <!-- Canvas sized to match expected template ratio (adjustable) -->
+    <canvas id="certCanvas" width="1000" height="700"></canvas>
+
+    <!-- Copyable textual data (so text is copyable) -->
+    <div class="info">
+      <div style="margin-bottom:8px"><strong>Certificate text (copyable):</strong></div>
+      <div class="flex">
+        <div><b>Name:</b> <span id="textName" contenteditable="true" style="outline:none"></span></div>
+        <div><b>Course:</b> <span id="textCourse" contenteditable="true" style="outline:none"></span></div>
+        <div><b>Issued (IST):</b> <span id="textDate" contenteditable="true" style="outline:none"></span></div>
+        <div><b>Certificate ID:</b> <span id="textId" class="mono" contenteditable="true" style="outline:none"></span>
+          <button class="copyBtn" id="copyIdBtn">Copy ID</button>
+        </div>
+      </div>
+      <div style="margin-top:8px" class="small">Tip: you can select or edit the text above and copy it anywhere.</div>
+    </div>
   </div>
 
-  <canvas id="certCanvas" width="1000" height="700"></canvas>
+<script>
+/*
+  REMEMBER:
+  - Put your Canva exported file named "certificate-template.png" next to this HTML.
+  - If text doesn't line up, edit the POSITION map below to move name/course/date/id.
+  - SECRET must match verify.html exactly.
+*/
 
-  <p style="font-size:13px;color:#aaa;">Right-click on the certificate to save it.<br>
-     Use the <b>Certificate ID</b> shown to verify on the verification page.</p>
+const SECRET = "CYBER_BUDDY_SECRET_V2"; // must match verify.html for verification
 
-  <script>
-    function generateCertificate() {
-      const name = document.getElementById("name").value.trim();
-      const course = document.getElementById("course").value.trim();
-      if (!name || !course) {
-        alert("Please enter your name and select a course!");
-        return;
-      }
+// --- Positioning: tweak these until text lines up with your template
+// Coordinates assume canvas.width = 1000 and canvas.height = 700
+const POSITION = {
+  name: { x: 500, y: 320, font: "700 36px Poppins", color: "#000", align: "center" },
+  course: { x: 500, y: 375, font: "600 28px Poppins", color: "#000", align: "center" },
+  date: { x: 500, y: 430, font: "500 20px Poppins", color: "#000", align: "center" },
+  id: { x: 820, y: 620, font: "600 18px Poppins", color: "#222", align: "right" } // ID at bottom-right by default
+};
 
-      // Generate unique certificate ID
-      const uniqueId = "CBA-" + Date.now();
+// If your template uses white text, change color to "#fff" in POSITION entries above
 
-      // Current IST Date & Time
-      const date = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+// Utility: base64url encode
+function base64urlEncode(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = ""; for(const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
 
-      // Draw certificate
-      const canvas = document.getElementById("certCanvas");
-      const ctx = canvas.getContext("2d");
+// sha256 -> base64url
+async function sha256b64url(str){
+  const data = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  const bytes = new Uint8Array(buf);
+  let bin = ""; for(const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
 
-      const img = new Image();
-      img.src = "certificate-template.png.png"; // <-- Exported Canva design (PNG/JPG)
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+// format ISO to IST human readable
+function formatIST(iso){
+  try {
+    return new Intl.DateTimeFormat("en-IN", {
+      dateStyle: "long",
+      timeStyle: "medium",
+      timeZone: "Asia/Kolkata"
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
 
-        ctx.fillStyle = "#000"; 
-        ctx.font = "28px Arial";
-        ctx.textAlign = "center";
+// Canvas & template loading
+const canvas = document.getElementById("certCanvas");
+const ctx = canvas.getContext("2d");
+const templateImage = new Image();
+templateImage.src = "certificate-template.png.png"; // <-- place your Canva export here
 
-        ctx.fillText(name, canvas.width / 2, 330);
-        ctx.fillText(course, canvas.width / 2, 380);
-        ctx.fillText(date, canvas.width / 2, 430);
+templateImage.onload = () => {
+  // initial blank draw
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(templateImage, 0,0, canvas.width, canvas.height);
+};
 
-        ctx.font = "20px Arial";
-        ctx.fillText("Certificate ID: " + uniqueId, canvas.width / 2, 480);
+// Generate certificate id (payload signed)
+async function generateSignedId(payloadObj){
+  const payloadJson = JSON.stringify(payloadObj);
+  const payloadB64 = base64urlEncode(payloadJson);
+  const sig = await sha256b64url(payloadB64 + "." + SECRET);
+  const sigShort = sig.slice(0,12);
+  return `CBA1-${payloadB64}.${sigShort}`;
+}
 
-        // Save issued certificate details to local array for demonstration
-        let issued = JSON.parse(localStorage.getItem("issuedCertificates") || "[]");
-        issued.push({ id: uniqueId, name, course, date });
-        localStorage.setItem("issuedCertificates", JSON.stringify(issued));
-      };
-    }
-  </script>
+// UI elements
+const genBtn = document.getElementById("genBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const nameInput = document.getElementById("name");
+const courseSelect = document.getElementById("course");
+const outName = document.getElementById("textName");
+const outCourse = document.getElementById("textCourse");
+const outDate = document.getElementById("textDate");
+const outId = document.getElementById("textId");
+const copyIdBtn = document.getElementById("copyIdBtn");
+
+genBtn.addEventListener("click", async () => {
+  const name = nameInput.value.trim();
+  const course = courseSelect.value;
+  if(!name){ alert("Enter full name"); nameInput.focus(); return; }
+
+  const issuedISO = new Date().toISOString();
+  const payload = { n: name, c: course, t: issuedISO };
+  const certId = await generateSignedId(payload);
+  // Draw the certificate
+  // ensure template is loaded first
+  if(!templateImage.complete){
+    await new Promise(r => templateImage.onload = r);
+  }
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(templateImage, 0,0, canvas.width, canvas.height);
+
+  // Draw text lines using POSITION mapping
+  function drawText(text, cfg){
+    ctx.save();
+    ctx.fillStyle = cfg.color || "#000";
+    ctx.textAlign = cfg.align || "left";
+    ctx.font = cfg.font || "600 22px Poppins";
+    ctx.fillText(text, cfg.x, cfg.y);
+    ctx.restore();
+  }
+
+  drawText(name, POSITION.name);
+  drawText(course, POSITION.course);
+  drawText(formatIST(issuedISO), POSITION.date);
+  drawText("ID: " + certId, POSITION.id);
+
+  // Fill copyable text fields (so user can select/copy)
+  outName.textContent = name;
+  outCourse.textContent = course;
+  outDate.textContent = formatIST(issuedISO);
+  outId.textContent = certId;
+
+  // Show download and copy buttons
+  downloadBtn.style.display = "inline-block";
+});
+
+// Download PNG
+downloadBtn.addEventListener("click", () => {
+  const data = canvas.toDataURL("image/png");
+  const a = document.createElement("a");
+  a.href = data;
+  a.download = "certificate.png";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
+
+// Copy ID
+copyIdBtn.addEventListener("click", async () => {
+  const text = outId.textContent.trim();
+  if(!text) return alert("No certificate ID to copy");
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Certificate ID copied to clipboard");
+  } catch {
+    alert("Copy failed — please select and copy manually");
+  }
+});
+</script>
 </body>
 </html>
-
