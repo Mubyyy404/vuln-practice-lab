@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Generator - Cyber Buddy Academy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .form-box {
+      margin: 20px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      width: 400px;
+    }
+    input, select, button {
+      width: 90%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00cc99;
+    }
+    canvas {
+      margin-top: 20px;
+      border: 2px solid #00ffcc;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cyber Buddy Academy - Certificate Generator</h1>
+
+  <div class="form-box">
+    <input type="text" id="name" placeholder="Enter your full name">
+    <select id="course">
+      <option value="">Select Course</option>
+      <option>Ethical Hacking</option>
+      <option>Web Application Penetration Testing</option>
+      <option>Network Security</option>
+    </select>
+    <button onclick="generateCertificate()">Generate Certificate</button>
+  </div>
+
+  <canvas id="certCanvas" width="1000" height="700"></canvas>
+
+  <p style="font-size:13px;color:#aaa;">Right-click on the certificate to save it.<br>
+     Use the <b>Certificate ID</b> shown to verify on the verification page.</p>
+
+  <script>
+    function generateCertificate() {
+      const name = document.getElementById("name").value.trim();
+      const course = document.getElementById("course").value.trim();
+      if (!name || !course) {
+        alert("Please enter your name and select a course!");
+        return;
+      }
+
+      // Generate unique certificate ID
+      const uniqueId = "CBA-" + Date.now();
+
+      // Current IST Date & Time
+      const date = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+      // Draw certificate
+      const canvas = document.getElementById("certCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const img = new Image();
+      img.src = "certificate-template.png"; // <-- Exported Canva design (PNG/JPG)
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#000"; 
+        ctx.font = "28px Arial";
+        ctx.textAlign = "center";
+
+        ctx.fillText(name, canvas.width / 2, 330);
+        ctx.fillText(course, canvas.width / 2, 380);
+        ctx.fillText(date, canvas.width / 2, 430);
+
+        ctx.font = "20px Arial";
+        ctx.fillText("Certificate ID: " + uniqueId, canvas.width / 2, 480);
+
+        // Save issued certificate details to local array for demonstration
+        let issued = JSON.parse(localStorage.getItem("issuedCertificates") || "[]");
+        issued.push({ id: uniqueId, name, course, date });
+        localStorage.setItem("issuedCertificates", JSON.stringify(issued));
+      };
+    }
+  </script>
+</body>
+</html>
