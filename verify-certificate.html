@@ -1,91 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Certificate - Cyber Buddy Academy</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f0c29;
-      color: #fff;
-      text-align: center;
-      padding: 50px;
-    }
-    .box {
-      background: rgba(0,0,0,0.7);
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 500px;
-      margin: auto;
-    }
-    input {
-      width: 80%;
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      border: none;
-    }
-    button {
-      padding: 12px 25px;
-      border: none;
-      border-radius: 6px;
-      background: #00ffcc;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .valid {
-      background: rgba(0,255,128,0.2);
-      color: #00ff99;
-    }
-    .invalid {
-      background: rgba(255,0,0,0.2);
-      color: #ff6666;
-    }
-    .tick {
-      font-size: 50px;
-      color: #00ff99;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Verify Certificate — Cyber Buddy Academy</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  body{font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#041025,#08203a);color:#e8f6ff;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;padding:18px}
+  .card{width:100%;max-width:760px;background:rgba(255,255,255,0.03);padding:22px;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5);text-align:center}
+  h1{margin:0 0 12px}
+  .input-row{display:flex;gap:10px;justify-content:center;margin-top:14px}
+  input{flex:1 1 420px;padding:12px;border-radius:8px;border:none;outline:none}
+  button{padding:10px 14px;border-radius:8px;border:none;background:#00ffcc;color:#002b2b;font-weight:700;cursor:pointer}
+  #result{margin-top:20px;min-height:180px}
+  /* Tick animation (SVG stroke) */
+  .checkwrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .badgeText{font-weight:700;color:#c8ffe6}
+  .verifiedTitle{font-size:18px;margin:4px 0;color:#dfffe8}
+  .timeLabel{opacity:0.85;color:#bbf5d9}
+  .idMono{font-family:ui-monospace,Consolas,monospace;background:#021424;padding:6px;border-radius:6px;margin-top:8px;display:inline-block}
+  /* SVG animations */
+  .circle{stroke:#00ff99;stroke-width:5;stroke-linecap:round;fill:none;stroke-dasharray:1000;stroke-dashoffset:1000;animation:drawCircle 700ms ease-out forwards}
+  .check{stroke:#00ff99;stroke-width:6;fill:none;stroke-linecap:round;stroke-dasharray:1000;stroke-dashoffset:1000;animation:drawCheck 500ms 700ms ease-out forwards}
+  @keyframes drawCircle{to{stroke-dashoffset:0}}
+  @keyframes drawCheck{to{stroke-dashoffset:0}}
+  .invalidBox{background:rgba(255,0,0,0.07);padding:18px;border-radius:10px;color:#ffb2b2}
+</style>
 </head>
 <body>
-  <h1>Cyber Buddy Academy - Certificate Verification</h1>
-  <div class="box">
-    <input type="text" id="certId" placeholder="Enter Certificate ID">
-    <br>
-    <button onclick="verifyCertificate()">Verify</button>
-    <div id="result" class="result"></div>
+  <div class="card">
+    <h1>🔎 Verify Certificate</h1>
+    <div class="small">Paste the certificate ID shown on the certificate and press Verify.</div>
+
+    <div class="input-row">
+      <input id="certInput" placeholder="CBA1-... (paste certificate ID)" />
+      <button id="verifyBtn"><i class="fa-solid fa-check"></i> Verify</button>
+    </div>
+
+    <div id="result"></div>
   </div>
 
-  <script>
-    function verifyCertificate() {
-      const certId = document.getElementById("certId").value.trim();
-      const issued = JSON.parse(localStorage.getItem("issuedCertificates") || "[]");
-      const cert = issued.find(c => c.id === certId);
-      const result = document.getElementById("result");
+<script>
+/*
+  Verification logic:
+  - Same SECRET string as generate.html
+  - ID format: CBA1-<payloadB64>.<sigShort>
+  - Recompute signature of payloadB64 + "." + SECRET with SHA-256 (base64url) and compare short sig.
+  - On success: decode payload JSON -> contains { n, c, t } where t is ISO time. Show Verified animation and Issued (IST).
+  - IMPORTANT: secret is client-side here for demo/offline verification. For production move verification to server.
+*/
 
-      if (cert) {
-        result.className = "result valid";
-        result.innerHTML = `
-          <div class="tick">✔</div>
-          <h2>Certificate Verified</h2>
-          <p><b>Name:</b> ${cert.name}</p>
-          <p><b>Course:</b> ${cert.course}</p>
-          <p><b>Date Issued:</b> ${cert.date}</p>
-          <p><b>Certificate ID:</b> ${cert.id}</p>
-          <hr>
-          <p>✅ Verified by <b>Cyber Buddy Academy</b></p>
-        `;
-      } else {
-        result.className = "result invalid";
-        result.innerHTML = `❌ Invalid Certificate ID`;
-      }
-    }
-  </script>
+const SECRET = "CYBER_BUDDY_SECRET_V2"; // MUST match generate.html
+
+function base64urlToJson(b64u){
+  try {
+    let b64 = b64u.replace(/-/g,"+").replace(/_/g,"/");
+    while(b64.length % 4) b64 += "=";
+    const bin = atob(b64);
+    // decode binary to UTF-8
+    const bytes = Uint8Array.from([...bin].map(c=>c.charCodeAt(0)));
+    const text = new TextDecoder().decode(bytes);
+    return JSON.parse(text);
+  } catch(e){
+    return null;
+  }
+}
+
+async function sha256b64url(str){
+  const data = new TextEncoder().encode(str);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  const bytes = new Uint8Array(buf);
+  let bin = ""; for(const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+
+function formatISTFromISO(iso){
+  try {
+    return new Intl.DateTimeFormat("en-IN", {
+      dateStyle: "long", timeStyle: "medium", timeZone: "Asia/Kolkata"
+    }).format(new Date(iso));
+  } catch { return iso; }
+}
+
+async function verifyId(id){
+  if(!id || typeof id !== "string") return { ok:false, reason:"Enter a certificate ID" };
+  const m = /^CBA1-([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]{12})$/.exec(id.trim());
+  if(!m) return { ok:false, reason:"Invalid certificate format" };
+  const payloadB64 = m[1], sigShort = m[2];
+  const recomputed = await sha256b64url(payloadB64 + "." + SECRET);
+  const recomputedShort = recomputed.slice(0,12);
+  if(recomputedShort !== sigShort) return { ok:false, reason:"Signature mismatch — certificate invalid" };
+  const data = base64urlToJson(payloadB64);
+  if(!data) return { ok:false, reason:"Corrupted payload" };
+  // expected fields: n (name), c (course), t (ISO timestamp)
+  return { ok:true, data };
+}
+
+// UI
+const input = document.getElementById("certInput");
+const btn = document.getElementById("verifyBtn");
+const result = document.getElementById("result");
+
+btn.addEventListener("click", async ()=>{
+  result.innerHTML = ""; // clear
+  const id = input.value.trim();
+  const res = await verifyId(id);
+  if(!res.ok){
+    result.innerHTML = `<div class="invalidBox"><strong>❌ Not Verified</strong><div style="opacity:.9;margin-top:8px">${res.reason}</div></div>`;
+    return;
+  }
+  // success -> show verified animation + Issued on IST
+  const issuedIso = res.data.t;
+  const issuedDisplay = formatISTFromISO(issuedIso);
+  result.innerHTML = `
+    <div class="checkwrap">
+      <div class="badgeText">Verified by Cyber Buddy Academy</div>
+      <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle class="circle" cx="60" cy="60" r="40" stroke-linecap="round" fill="none"/>
+        <path class="check" d="M45 62 L55 72 L78 48" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div class="verifiedTitle">Certificate Verified</div>
+      <div class="timeLabel">Issued on: <strong>${issuedDisplay}</strong></div>
+      <div class="idMono">${id}</div>
+    </div>
+  `;
+});
+
+// Allow pressing Enter to verify
+input.addEventListener("keypress", (e)=>{
+  if(e.key === "Enter") btn.click();
+});
+
+// Pre-fill from ?id=... (optional)
+const qp = new URLSearchParams(location.search);
+const qid = qp.get("id");
+if(qid) { input.value = qid; setTimeout(()=>btn.click(), 250); }
+</script>
 </body>
 </html>
