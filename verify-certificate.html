@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Certificate - Cyber Buddy Academy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0c29;
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+    }
+    .box {
+      background: rgba(0,0,0,0.7);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input {
+      width: 80%;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      border: none;
+    }
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      background: #00ffcc;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .valid {
+      background: rgba(0,255,128,0.2);
+      color: #00ff99;
+    }
+    .invalid {
+      background: rgba(255,0,0,0.2);
+      color: #ff6666;
+    }
+    .tick {
+      font-size: 50px;
+      color: #00ff99;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cyber Buddy Academy - Certificate Verification</h1>
+  <div class="box">
+    <input type="text" id="certId" placeholder="Enter Certificate ID">
+    <br>
+    <button onclick="verifyCertificate()">Verify</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function verifyCertificate() {
+      const certId = document.getElementById("certId").value.trim();
+      const issued = JSON.parse(localStorage.getItem("issuedCertificates") || "[]");
+      const cert = issued.find(c => c.id === certId);
+      const result = document.getElementById("result");
+
+      if (cert) {
+        result.className = "result valid";
+        result.innerHTML = `
+          <div class="tick">✔</div>
+          <h2>Certificate Verified</h2>
+          <p><b>Name:</b> ${cert.name}</p>
+          <p><b>Course:</b> ${cert.course}</p>
+          <p><b>Date Issued:</b> ${cert.date}</p>
+          <p><b>Certificate ID:</b> ${cert.id}</p>
+          <hr>
+          <p>✅ Verified by <b>Cyber Buddy Academy</b></p>
+        `;
+      } else {
+        result.className = "result invalid";
+        result.innerHTML = `❌ Invalid Certificate ID`;
+      }
+    }
+  </script>
+</body>
+</html>
